@@ -878,63 +878,11 @@ export function TacticalViewport() {
               )}>Collapse Zone</span>
             </div>
 
-            {/* Exposure Building - Left (Bravo) */}
-            <div className="absolute -left-32 top-4 w-24 h-24">
-              <div className={cn(
-                "w-full h-16 border",
-                displayMode === "night-vision" ? "bg-green-950 border-green-800/60" : 
-                displayMode === "light" ? "bg-slate-300 border-slate-400/60" : "bg-secondary border-border/60"
-              )}>
-                <div className={cn(
-                  "absolute top-2 left-2 w-4 h-5 border",
-                  displayMode === "night-vision" ? "bg-green-900 border-green-800/40" : 
-                  displayMode === "light" ? "bg-slate-200 border-slate-400/40" : "bg-muted border-border/40"
-                )} />
-                <div className={cn(
-                  "absolute top-2 right-2 w-4 h-5 border",
-                  displayMode === "night-vision" ? "bg-green-900 border-green-800/40" : 
-                  displayMode === "light" ? "bg-slate-200 border-slate-400/40" : "bg-muted border-border/40"
-                )} />
-              </div>
-              <div className={cn(
-                "w-full h-3 border-x border-b",
-                displayMode === "night-vision" ? "bg-green-900 border-green-800/40" : 
-                displayMode === "light" ? "bg-slate-200 border-slate-400/40" : "bg-muted border-border/40"
-              )} />
-              <span className={cn("absolute -bottom-4 left-1/2 -translate-x-1/2 text-[8px]", styles.mutedText)}>EXPOSURE B</span>
-            </div>
-
-            {/* Exposure Building - Right (Delta) */}
-            <div className="absolute -right-28 top-8 w-20 h-20">
-              <div className={cn(
-                "w-full h-14 border",
-                displayMode === "night-vision" ? "bg-green-950 border-green-800/60" : 
-                displayMode === "light" ? "bg-slate-300 border-slate-400/60" : "bg-secondary border-border/60"
-              )}>
-                <div className={cn(
-                  "absolute top-2 left-2 w-4 h-5 border",
-                  displayMode === "night-vision" ? "bg-green-900 border-green-800/40" : 
-                  displayMode === "light" ? "bg-slate-200 border-slate-400/40" : "bg-muted border-border/40"
-                )} />
-                <div className={cn(
-                  "absolute top-2 right-2 w-4 h-5 border",
-                  displayMode === "night-vision" ? "bg-green-900 border-green-800/40" : 
-                  displayMode === "light" ? "bg-slate-200 border-slate-400/40" : "bg-muted border-border/40"
-                )} />
-              </div>
-              <div className={cn(
-                "w-full h-3 border-x border-b",
-                displayMode === "night-vision" ? "bg-green-900 border-green-800/40" : 
-                displayMode === "light" ? "bg-slate-200 border-slate-400/40" : "bg-muted border-border/40"
-              )} />
-              <span className={cn("absolute -bottom-4 left-1/2 -translate-x-1/2 text-[8px]", styles.mutedText)}>EXPOSURE D</span>
-            </div>
-
-            {/* Fire Apparatus - Engine 78 (positioned on W Marquette Rd) */}
+            {/* Fire Apparatus - Engine 78 (positioned on W Marquette Rd in front - Alpha side) */}
             <div className={cn(
-              "absolute -bottom-24 left-1/2 -translate-x-1/2 w-20 h-8 border rounded-sm",
+              "absolute -bottom-20 left-1/2 -translate-x-1/2 w-20 h-8 border rounded-sm",
               displayMode === "night-vision" ? "bg-green-700/80 border-green-500 shadow-[0_0_15px_rgba(0,200,0,0.4)]" : "bg-fire/80 border-fire glow-fire"
-            )}>
+            )} style={{ transform: "translateX(-50%) translateY(20px)" }}>
               <span className={cn(
                 "absolute -top-4 left-1/2 -translate-x-1/2 text-[7px] font-bold whitespace-nowrap",
                 displayMode === "night-vision" ? "text-green-400" : "text-fire"
@@ -949,11 +897,11 @@ export function TacticalViewport() {
               )} />
             </div>
 
-            {/* Truck 23 (positioned near S California Ave) */}
+            {/* Truck 23 (positioned on California Ave - west of scene) */}
             <div className={cn(
-              "absolute -bottom-36 left-1/4 w-24 h-7 border rounded-sm",
+              "absolute -bottom-32 left-1/4 w-24 h-7 border rounded-sm",
               displayMode === "night-vision" ? "bg-green-700/80 border-green-500 shadow-[0_0_15px_rgba(0,200,0,0.4)]" : "bg-fire/80 border-fire glow-fire"
-            )}>
+            )} style={{ transform: "translateY(20px)" }}>
               <span className={cn(
                 "absolute -top-4 left-1/2 -translate-x-1/2 text-[7px] font-bold whitespace-nowrap",
                 displayMode === "night-vision" ? "text-green-400" : "text-fire"
@@ -965,19 +913,19 @@ export function TacticalViewport() {
             </div>
 
             {/* Hose Lines */}
-            <svg className="absolute -bottom-20 left-0 w-full h-32 pointer-events-none" style={{ transform: "translateZ(1px)" }}>
-              {/* Main attack line */}
+            <svg className="absolute -bottom-16 left-0 w-full h-32 pointer-events-none" style={{ transform: "translateZ(1px) translateY(20px)" }}>
+              {/* Main attack line - from Engine to building Alpha side */}
               <path 
-                d={`M 80 90 Q 60 70, 70 40 T 80 10`}
+                d={`M 80 100 Q 60 80, 70 50 T 80 20`}
                 fill="none"
                 stroke={displayMode === "night-vision" ? "rgba(0, 150, 255, 0.7)" : "rgba(80, 150, 255, 0.8)"}
                 strokeWidth="4"
                 strokeLinecap="round"
                 className="drop-shadow-[0_0_4px_rgba(80,150,255,0.6)]"
               />
-              {/* Supply line */}
+              {/* Supply line - from hydrant to engine */}
               <path 
-                d={`M 80 100 L 80 130`}
+                d={`M 120 120 L 80 110`}
                 fill="none"
                 stroke={displayMode === "night-vision" ? "rgba(0, 200, 0, 0.5)" : "rgba(100, 180, 100, 0.6)"}
                 strokeWidth="6"
@@ -985,11 +933,11 @@ export function TacticalViewport() {
               />
             </svg>
 
-            {/* Hydrant - S Fairfield Ave (between California and Mozart) */}
+            {/* Hydrant - on Marquette Rd east of scene */}
             <div className={cn(
-              "absolute -bottom-40 right-1/4 w-4 h-6 rounded-t border-2",
+              "absolute -bottom-36 right-1/4 w-4 h-6 rounded-t border-2",
               displayMode === "night-vision" ? "bg-green-700 border-green-500" : "bg-water border-water-glow"
-            )}>
+            )} style={{ transform: "translateY(20px)" }}>
               <div className={cn(
                 "absolute -top-1 left-1/2 -translate-x-1/2 w-6 h-2 rounded",
                 displayMode === "night-vision" ? "bg-green-600" : "bg-water"
@@ -1001,42 +949,43 @@ export function TacticalViewport() {
             </div>
 
             {/* Firefighter Team Markers */}
+            {/* A1 = Attack team Alpha side, V1 = Ventilation, R = Roof team */}
             <div className={cn(
               "absolute -bottom-4 left-8 w-5 h-5 rounded-full border-2 flex items-center justify-center",
               displayMode === "night-vision" ? "bg-green-800 border-green-500" : "bg-safe border-safe-glow"
-            )}>
+            )} style={{ transform: "translateY(20px)" }}>
               <span className={cn("text-[6px] font-bold", displayMode === "night-vision" ? "text-green-300" : "text-safe-glow")}>A1</span>
             </div>
             <div className={cn(
-              "absolute top-8 -right-8 w-5 h-5 rounded-full border-2 flex items-center justify-center",
+              "absolute top-12 -right-8 w-5 h-5 rounded-full border-2 flex items-center justify-center",
               displayMode === "night-vision" ? "bg-green-800 border-green-500" : "bg-safe border-safe-glow"
-            )}>
+            )} style={{ transform: "translateY(20px)" }}>
               <span className={cn("text-[6px] font-bold", displayMode === "night-vision" ? "text-green-300" : "text-safe-glow")}>V1</span>
             </div>
             <div className={cn(
-              "absolute -top-8 left-1/2 w-5 h-5 rounded-full border-2 flex items-center justify-center",
+              "absolute -top-4 left-1/2 w-5 h-5 rounded-full border-2 flex items-center justify-center",
               displayMode === "night-vision" ? "bg-green-700 border-green-400 animate-pulse" : "bg-hazard border-hazard-glow animate-pulse"
-            )}>
+            )} style={{ transform: "translateX(-50%) translateY(20px)" }}>
               <span className={cn("text-[6px] font-bold", displayMode === "night-vision" ? "text-green-300" : "text-hazard-glow")}>R</span>
             </div>
 
-            {/* Side Labels */}
+            {/* Side Labels - Alpha=North (street), Bravo=West, Charlie=South (rear), Delta=East */}
             <div className={cn(
-              "absolute -bottom-16 left-1/2 -translate-x-1/2 px-2 py-0.5 rounded text-[8px] font-bold uppercase tracking-wider border",
+              "absolute -bottom-14 left-1/2 -translate-x-1/2 px-2 py-0.5 rounded text-[8px] font-bold uppercase tracking-wider border",
               displayMode === "night-vision" ? "bg-green-950/80 border-green-700 text-green-400" : "bg-card/80 border-border text-foreground"
-            )}>Alpha</div>
+            )} style={{ transform: "translateX(-50%) translateY(20px)" }}>Alpha (Street)</div>
             <div className={cn(
-              "absolute top-1/2 -translate-y-1/2 -left-24 px-2 py-0.5 rounded text-[8px] font-bold uppercase tracking-wider border",
+              "absolute top-1/2 -translate-y-1/2 -left-20 px-2 py-0.5 rounded text-[8px] font-bold uppercase tracking-wider border",
               displayMode === "night-vision" ? "bg-green-950/80 border-green-700 text-green-400" : "bg-card/80 border-border text-foreground"
-            )}>Bravo</div>
+            )} style={{ transform: "translateY(20px)" }}>Bravo</div>
             <div className={cn(
-              "absolute -top-12 left-1/2 -translate-x-1/2 px-2 py-0.5 rounded text-[8px] font-bold uppercase tracking-wider border",
+              "absolute -top-10 left-1/2 -translate-x-1/2 px-2 py-0.5 rounded text-[8px] font-bold uppercase tracking-wider border",
               displayMode === "night-vision" ? "bg-green-950/80 border-green-700 text-green-400" : "bg-card/80 border-border text-foreground"
-            )}>Charlie</div>
+            )} style={{ transform: "translateX(-50%) translateY(20px)" }}>Charlie (Rear)</div>
             <div className={cn(
-              "absolute top-1/2 -translate-y-1/2 -right-20 px-2 py-0.5 rounded text-[8px] font-bold uppercase tracking-wider border",
+              "absolute top-1/2 -translate-y-1/2 -right-16 px-2 py-0.5 rounded text-[8px] font-bold uppercase tracking-wider border",
               displayMode === "night-vision" ? "bg-green-950/80 border-green-700 text-green-400" : "bg-card/80 border-border text-foreground"
-            )}>Delta</div>
+            )} style={{ transform: "translateY(20px)" }}>Delta</div>
           </div>
         </div>
       </div>
