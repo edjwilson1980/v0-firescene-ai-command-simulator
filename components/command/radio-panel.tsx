@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { Radio, Truck, Users, Droplets, AlertTriangle, Shield, Search, ChevronLeft, ChevronRight, X } from "lucide-react"
-import { useSimulation, SectorView } from "./simulation-context"
+import { useSimulation } from "./simulation-context"
 import { cn } from "@/lib/utils"
 
 interface RadioMessage {
@@ -28,18 +28,6 @@ const radioMessages: RadioMessage[] = [
   { id: "12", timestamp: "14:14", unit: "Engine 84", message: "Engine 84 on scene, water supply", type: "engine" },
 ]
 
-const sectorLabels: Record<SectorView, string> = {
-  "alpha": "Alpha Side",
-  "bravo": "Bravo Side",
-  "charlie": "Charlie Side",
-  "delta": "Delta Side",
-  "roof": "Roof View",
-  "overhead": "Overhead View",
-  "interior": "Interior Slice",
-}
-
-const sectors: SectorView[] = ["alpha", "bravo", "charlie", "delta", "roof", "overhead", "interior"]
-
 const getIcon = (type: RadioMessage["type"]) => {
   switch (type) {
     case "engine": return <Droplets className="w-3.5 h-3.5" />
@@ -53,9 +41,6 @@ const getIcon = (type: RadioMessage["type"]) => {
 }
 
 const getTypeColor = (type: RadioMessage["type"], displayMode: string) => {
-  if (displayMode === "night-vision") {
-    return "text-green-400 border-green-700/50 bg-green-900/30"
-  }
   if (displayMode === "light") {
     switch (type) {
       case "engine": return "text-blue-700 border-blue-300 bg-blue-100"
@@ -87,7 +72,7 @@ interface RadioPanelProps {
 }
 
 export function RadioPanel({ isCollapsed, onToggleCollapse, isClosed, onClose, onOpen }: RadioPanelProps) {
-  const { displayMode, selectedSector, goToSector, isFreeRotate, resetViewport } = useSimulation()
+  const { displayMode } = useSimulation()
 
   const getDisplayModeStyles = () => {
     switch (displayMode) {
@@ -102,18 +87,6 @@ export function RadioPanel({ isCollapsed, onToggleCollapse, isClosed, onClose, o
           liveColor: "text-red-600",
           liveBg: "bg-red-600",
           collapsedBg: "bg-white/95 border-slate-300",
-        }
-      case "night-vision":
-        return {
-          containerBg: "bg-black/95 border-green-900",
-          headerBg: "border-green-900",
-          textColor: "text-green-400",
-          mutedText: "text-green-600",
-          cardBg: "bg-green-950/50 border-green-900/50",
-          activeBg: "bg-green-900/50 border-green-600/50",
-          liveColor: "text-green-400",
-          liveBg: "bg-green-500",
-          collapsedBg: "bg-black/95 border-green-900",
         }
       default:
         return {
@@ -142,7 +115,7 @@ export function RadioPanel({ isCollapsed, onToggleCollapse, isClosed, onClose, o
           styles.collapsedBg
         )}
       >
-        <Radio className={cn("w-4 h-4", displayMode === "night-vision" ? "text-green-500" : displayMode === "light" ? "text-purple-600" : "text-radio")} />
+        <Radio className={cn("w-4 h-4", displayMode === "light" ? "text-purple-600" : "text-radio")} />
         <ChevronRight className={cn("w-3 h-3", styles.mutedText)} />
       </button>
     )
@@ -157,11 +130,11 @@ export function RadioPanel({ isCollapsed, onToggleCollapse, isClosed, onClose, o
       )}>
         <button
           onClick={onToggleCollapse}
-          className={cn("p-1.5 rounded hover:bg-secondary/50 mb-2", displayMode === "night-vision" && "hover:bg-green-900/50")}
+          className={cn("p-1.5 rounded hover:bg-secondary/50 mb-2")}
         >
           <ChevronRight className={cn("w-4 h-4", styles.mutedText)} />
         </button>
-        <Radio className={cn("w-4 h-4 mb-2", displayMode === "night-vision" ? "text-green-500" : displayMode === "light" ? "text-purple-600" : "text-radio")} />
+        <Radio className={cn("w-4 h-4 mb-2", displayMode === "light" ? "text-purple-600" : "text-radio")} />
         <div className={cn("w-2 h-2 rounded-full animate-pulse mb-2", styles.liveBg)} />
         <span className={cn("text-[8px] uppercase tracking-wider", styles.mutedText)} style={{ writingMode: "vertical-rl" }}>Radio</span>
       </div>
@@ -171,14 +144,12 @@ export function RadioPanel({ isCollapsed, onToggleCollapse, isClosed, onClose, o
   return (
     <div className={cn(
       "w-72 flex flex-col overflow-hidden border-r transition-all",
-      displayMode === "light" ? styles.containerBg : "",
-      displayMode === "night-vision" ? styles.containerBg : "",
-      displayMode === "dark" && "tactical-card"
+      displayMode === "light" ? styles.containerBg : displayMode === "dark" && "tactical-card"
     )}>
       {/* Header */}
       <div className={cn("p-3 border-b flex items-center justify-between", styles.headerBg)}>
         <div className="flex items-center gap-2">
-          <Radio className={cn("w-4 h-4", displayMode === "night-vision" ? "text-green-500" : displayMode === "light" ? "text-purple-600" : "text-radio")} />
+          <Radio className={cn("w-4 h-4", displayMode === "light" ? "text-purple-600" : "text-radio")} />
           <span className={cn("text-sm font-semibold uppercase tracking-wide", styles.textColor)}>Radio Traffic</span>
         </div>
         <div className="flex items-center gap-2">
@@ -188,13 +159,13 @@ export function RadioPanel({ isCollapsed, onToggleCollapse, isClosed, onClose, o
           </div>
           <button
             onClick={onToggleCollapse}
-            className={cn("p-1 rounded hover:bg-secondary/50", displayMode === "night-vision" && "hover:bg-green-900/50")}
+            className={cn("p-1 rounded hover:bg-secondary/50")}
           >
             <ChevronLeft className={cn("w-4 h-4", styles.mutedText)} />
           </button>
           <button
             onClick={onClose}
-            className={cn("p-1 rounded hover:bg-secondary/50", displayMode === "night-vision" && "hover:bg-green-900/50")}
+            className={cn("p-1 rounded hover:bg-secondary/50")}
           >
             <X className={cn("w-4 h-4", styles.mutedText)} />
           </button>
@@ -223,35 +194,6 @@ export function RadioPanel({ isCollapsed, onToggleCollapse, isClosed, onClose, o
             </p>
           </div>
         ))}
-      </div>
-
-      {/* Select View Section */}
-      <div className={cn("border-t p-2", styles.headerBg)}>
-        <div className={cn("text-[9px] uppercase tracking-wider font-semibold mb-2", styles.mutedText)}>Select View</div>
-        <div className="flex flex-col gap-1">
-          {sectors.map((sector) => (
-            <button
-              key={sector}
-              onClick={() => goToSector(sector)}
-              className={cn(
-                "px-2 py-1.5 rounded text-[9px] font-medium transition-all duration-200 text-left",
-                selectedSector === sector && !isFreeRotate
-                  ? "bg-accent text-accent-foreground"
-                  : cn(styles.mutedText, "hover:bg-secondary hover:text-foreground")
-              )}
-            >
-              {sectorLabels[sector]}
-            </button>
-          ))}
-        </div>
-        {isFreeRotate && (
-          <button
-            onClick={resetViewport}
-            className="mt-2 w-full px-2 py-1 rounded text-[8px] font-medium bg-fire/20 text-fire border border-fire/30 hover:bg-fire/30 transition-all"
-          >
-            Reset to Alpha
-          </button>
-        )}
       </div>
 
       {/* Footer */}

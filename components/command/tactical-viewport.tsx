@@ -82,6 +82,7 @@ export function TacticalViewport() {
   const isRoofView = selectedSector === "roof" || selectedSector === "overhead"
 
   const mapSources: MapSource[] = ["tactical", "satellite", "google-maps", "google-earth"]
+  const sectors: SectorView[] = ["alpha", "bravo", "charlie", "delta", "roof", "overhead", "interior"]
 
   const sectors: SectorView[] = ["alpha", "bravo", "charlie", "delta", "roof", "overhead", "interior"]
 
@@ -379,8 +380,36 @@ export function TacticalViewport() {
           </div>
         </div>
 
-        {/* Sector Buttons - Right Side (where zoom controls were) */}
-        {/* MOVED TO RADIO PANEL - Sector buttons now appear in the left radio panel and collapse with it */}
+        {/* Sector Buttons - Left Side (now on left instead of right) */}
+        <div className="absolute top-36 left-4 z-20" onClick={(e) => e.stopPropagation()}>
+          <div className={cn("p-2 rounded-lg border", styles.panelBg)}>
+            <div className={cn("text-[9px] uppercase tracking-wider mb-2", styles.mutedText)}>Select View</div>
+            <div className="flex flex-col gap-1">
+              {sectors.map((sector) => (
+                <button
+                  key={sector}
+                  onClick={() => goToSector(sector)}
+                  className={cn(
+                    "px-3 py-1.5 rounded text-[10px] font-medium transition-all duration-200 text-left",
+                    selectedSector === sector && !isFreeRotate
+                      ? "bg-accent text-accent-foreground"
+                      : cn(styles.mutedText, "hover:bg-secondary hover:text-foreground")
+                  )}
+                >
+                  {sectorLabels[sector]}
+                </button>
+              ))}
+            </div>
+            {isFreeRotate && (
+              <button
+                onClick={resetViewport}
+                className="mt-2 w-full px-2 py-1 rounded text-[9px] font-medium bg-fire/20 text-fire border border-fire/30 hover:bg-fire/30 transition-all"
+              >
+                Reset to Alpha
+              </button>
+            )}
+          </div>
+        </div>
 
         {/* Isometric Scene Container */}
         <div 
