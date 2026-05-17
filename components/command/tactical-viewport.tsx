@@ -72,13 +72,13 @@ const mapSourceStyles: Record<MapSource, { bg: string; grid: string; label: stri
 
 export function TacticalViewport() {
   const { 
-    selectedSector, 
+    selectedSector, goToSector,
     mapSource, setMapSource, 
     currentEvent,
     viewportTransform, setViewportTransform,
     isFreeRotate, setIsFreeRotate,
-    resetViewport, goToSector, goToFloor,
-    viewMode, selectedFloor,
+    resetViewport, goToFloor,
+    viewMode, setViewMode, selectedFloor,
     displayMode
   } = useSimulation()
   
@@ -271,6 +271,30 @@ export function TacticalViewport() {
               </button>
             )
           })}
+        </div>
+        
+        {/* View Mode Toggle - Sector/Floor */}
+        <div className={cn("flex items-center gap-0.5 px-1 py-1 rounded border", styles.panelBg)}>
+          <button
+            onClick={() => setViewMode("sector")}
+            className={cn(
+              "px-2 py-0.5 rounded text-[8px] font-medium transition-all duration-200",
+              viewMode === "sector" ? "bg-accent text-accent-foreground" : cn(styles.mutedText, "hover:bg-secondary hover:text-foreground")
+            )}
+            title="Sector view by building side"
+          >
+            Sector
+          </button>
+          <button
+            onClick={() => setViewMode("floor")}
+            className={cn(
+              "px-2 py-0.5 rounded text-[8px] font-medium transition-all duration-200",
+              viewMode === "floor" ? "bg-accent text-accent-foreground" : cn(styles.mutedText, "hover:bg-secondary hover:text-foreground")
+            )}
+            title="Floor view by building level"
+          >
+            Floor
+          </button>
         </div>
         
         <div className="flex items-center gap-1">

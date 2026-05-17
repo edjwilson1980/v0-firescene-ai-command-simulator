@@ -85,30 +85,6 @@ export function HeaderBar() {
           </div>
         </div>
 
-        {/* View Mode Toggle */}
-        <div className={cn("flex items-center gap-1 p-1 rounded-lg border", styles.toggleBg)}>
-          <button
-            onClick={() => setViewMode("sector")}
-            className={cn(
-              "flex items-center gap-1.5 px-2.5 py-1.5 rounded text-[10px] font-medium transition-all duration-200",
-              viewMode === "sector" ? styles.toggleActive : styles.toggleInactive
-            )}
-            title="Sector view by building side"
-          >
-            Sector
-          </button>
-          <button
-            onClick={() => setViewMode("floor")}
-            className={cn(
-              "flex items-center gap-1.5 px-2.5 py-1.5 rounded text-[10px] font-medium transition-all duration-200",
-              viewMode === "floor" ? styles.toggleActive : styles.toggleInactive
-            )}
-            title="Floor view by building level"
-          >
-            Floor
-          </button>
-        </div>
-
         {/* Address */}
         <div className="flex items-center gap-2 text-sm">
           <MapPin className={cn("w-4 h-4", styles.mutedText)} />
