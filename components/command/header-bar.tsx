@@ -1,13 +1,12 @@
 "use client"
 
-import { Flame, Radio, Wifi, Wind, Activity, MapPin, Clock, Sun, Moon, Eye } from "lucide-react"
+import { Flame, Radio, Wifi, Wind, Activity, MapPin, Clock, Sun, Moon } from "lucide-react"
 import { useSimulation, DisplayMode } from "./simulation-context"
 import { cn } from "@/lib/utils"
 
 const displayModes: { id: DisplayMode; label: string; icon: typeof Sun; description: string }[] = [
   { id: "dark", label: "Dark", icon: Moon, description: "Night Command" },
   { id: "light", label: "Light", icon: Sun, description: "Daylight Use" },
-  { id: "night-vision", label: "NV", icon: Eye, description: "Night Vision" },
 ]
 
 export function HeaderBar() {
@@ -34,26 +33,7 @@ export function HeaderBar() {
           liveDot: "bg-red-500",
           syncBg: "bg-emerald-100 border-emerald-300",
           syncText: "text-emerald-600",
-        }
-      case "night-vision":
-        return {
-          containerBg: "bg-black/95 border-green-900",
-          textColor: "text-green-400",
-          mutedText: "text-green-600",
-          logoBg: "bg-green-900/50 border-green-700",
-          logoIcon: "text-green-500",
-          statusBg: "bg-green-900/50 border-green-600",
-          statusText: "text-green-400",
-          timerBg: "bg-green-950 border-green-800",
-          timerIcon: "text-green-500",
-          toggleBg: "bg-green-950 border-green-800",
-          toggleActive: "bg-green-700 text-green-200",
-          toggleInactive: "text-green-600 hover:bg-green-900/50 hover:text-green-400",
-          liveBg: "bg-green-900/50 border-green-700",
-          liveText: "text-green-400",
-          liveDot: "bg-green-500",
-          syncBg: "bg-green-900/50 border-green-700",
-          syncText: "text-green-400",
+          wifiColor: "bg-emerald-500",
         }
       default:
         return {
@@ -74,6 +54,7 @@ export function HeaderBar() {
           liveDot: "bg-live glow-live",
           syncBg: "bg-sync/10 border-sync/30",
           syncText: "text-sync",
+          wifiColor: "bg-sync",
         }
     }
   }
@@ -163,10 +144,10 @@ export function HeaderBar() {
         <div className="flex items-center gap-1.5">
           <Wifi className={cn("w-4 h-4", styles.syncText)} />
           <div className="flex gap-0.5">
-            <div className={cn("w-1 h-2 rounded-sm", displayMode === "night-vision" ? "bg-green-500" : displayMode === "light" ? "bg-emerald-500" : "bg-sync")} />
-            <div className={cn("w-1 h-3 rounded-sm", displayMode === "night-vision" ? "bg-green-500" : displayMode === "light" ? "bg-emerald-500" : "bg-sync")} />
-            <div className={cn("w-1 h-4 rounded-sm", displayMode === "night-vision" ? "bg-green-500" : displayMode === "light" ? "bg-emerald-500" : "bg-sync")} />
-            <div className={cn("w-1 h-5 rounded-sm", displayMode === "night-vision" ? "bg-green-500" : displayMode === "light" ? "bg-emerald-500" : "bg-sync")} />
+            <div className={cn("w-1 h-2 rounded-sm", styles.wifiColor)} />
+            <div className={cn("w-1 h-3 rounded-sm", styles.wifiColor)} />
+            <div className={cn("w-1 h-4 rounded-sm", styles.wifiColor)} />
+            <div className={cn("w-1 h-5 rounded-sm", styles.wifiColor)} />
           </div>
         </div>
       </div>

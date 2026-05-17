@@ -197,15 +197,6 @@ export function TacticalViewport() {
           mutedText: "text-slate-600",
           useMapBg: false,
         }
-      case "night-vision":
-        return {
-          containerBg: "bg-black",
-          gridColor: "rgba(0, 255, 0, 0.08)",
-          panelBg: "bg-black/90 border-green-900/50",
-          textColor: "text-green-400",
-          mutedText: "text-green-600",
-          useMapBg: false,
-        }
       default:
         return {
           containerBg: currentMapStyle.bg,
@@ -246,6 +237,30 @@ export function TacticalViewport() {
             </span>
           </div>
         </div>
+        
+        {/* Map Source Toggle - In Header */}
+        <div className="flex items-center gap-1 px-2 py-1 rounded-lg bg-secondary/50 border border-border">
+          <span className="text-[9px] uppercase tracking-wider text-muted-foreground mr-1">Map:</span>
+          {mapSources.map((source) => {
+            const Icon = mapSourceIcons[source]
+            return (
+              <button
+                key={source}
+                onClick={() => setMapSource(source)}
+                className={cn(
+                  "flex items-center gap-1 px-2 py-1 rounded text-[9px] font-medium transition-all duration-200",
+                  mapSource === source
+                    ? "bg-accent text-accent-foreground"
+                    : "text-muted-foreground hover:bg-secondary hover:text-foreground"
+                )}
+              >
+                <Icon className="w-3 h-3" />
+                {mapSourceLabels[source]}
+              </button>
+            )
+          })}
+        </div>
+        
         <div className="flex items-center gap-1">
           <span className="text-[10px] text-muted-foreground mr-2">
             Zoom: {Math.round(viewportTransform.zoom * 100)}%
@@ -305,10 +320,6 @@ export function TacticalViewport() {
         {styles.useMapBg && (
           <div className={cn("absolute inset-0 transition-all duration-500", currentMapStyle.bg)} />
         )}
-        {/* Night Vision Overlay */}
-        {displayMode === "night-vision" && (
-          <div className="absolute inset-0 bg-green-950/20 pointer-events-none z-30 mix-blend-overlay" />
-        )}
 
         {/* Grid Background */}
         <div 
@@ -322,57 +333,21 @@ export function TacticalViewport() {
           }}
         />
 
-        {/* Map Source Toggle - Top Left */}
-        <div className="absolute top-4 left-4 z-20" onClick={(e) => e.stopPropagation()}>
-          <div className={cn("p-2 rounded-lg border", styles.panelBg)}>
-            <div className={cn("text-[9px] uppercase tracking-wider mb-2", styles.mutedText)}>Map Source</div>
-            <div className="flex gap-1">
-              {mapSources.map((source) => {
-                const Icon = mapSourceIcons[source]
-                return (
-                  <button
-                    key={source}
-                    onClick={(e) => { e.stopPropagation(); setMapSource(source); }}
-                    className={cn(
-                      "flex flex-col items-center gap-1 px-2.5 py-2 rounded text-[9px] font-medium transition-all duration-200 min-w-[52px]",
-                      mapSource === source
-                        ? displayMode === "night-vision" 
-                          ? "bg-green-900/50 text-green-300 ring-1 ring-green-500/50" 
-                          : "bg-accent text-accent-foreground ring-1 ring-accent/50"
-                        : cn(styles.mutedText, "hover:bg-secondary hover:text-foreground")
-                    )}
-                  >
-                    <Icon className="w-4 h-4" />
-                    {mapSourceLabels[source]}
-                  </button>
-                )
-              })}
-            </div>
-          </div>
-        </div>
-
         {/* Compass - Top Right */}
         <div className="absolute top-4 right-4 z-20" onClick={(e) => e.stopPropagation()}>
           <div className={cn(
             "w-24 h-24 rounded-full p-2 relative border",
-            styles.panelBg,
-            displayMode === "night-vision" && "border-green-800"
+            styles.panelBg
           )}>
             {/* Compass Ring */}
-            <div className={cn(
-              "absolute inset-2 rounded-full border-2",
-              displayMode === "night-vision" ? "border-green-800/50" : "border-border/50"
-            )} />
+            <div className="absolute inset-2 rounded-full border-2 border-border/50" />
             
             {/* Cardinal Directions - Fixed to true north based on cross street anchors */}
             <div 
               className="absolute inset-0 transition-transform duration-200"
               style={{ transform: `rotate(${compassRotationForAngle(viewportTransform.rotateZ)}deg)` }}
             >
-              <span className={cn(
-                "absolute top-1 left-1/2 -translate-x-1/2 text-[10px] font-bold",
-                displayMode === "night-vision" ? "text-green-400" : "text-fire"
-              )}>N</span>
+              <span className="absolute top-1 left-1/2 -translate-x-1/2 text-[10px] font-bold text-fire">N</span>
               <span className={cn("absolute bottom-1 left-1/2 -translate-x-1/2 text-[10px] font-medium", styles.mutedText)}>S</span>
               <span className={cn("absolute left-1 top-1/2 -translate-y-1/2 text-[10px] font-medium", styles.mutedText)}>W</span>
               <span className={cn("absolute right-1 top-1/2 -translate-y-1/2 text-[10px] font-medium", styles.mutedText)}>E</span>
@@ -384,19 +359,13 @@ export function TacticalViewport() {
                 className="w-1 h-10 relative transition-transform duration-200"
                 style={{ transform: `rotate(${-compassRotationForAngle(viewportTransform.rotateZ)}deg)` }}
               >
-                <div className={cn(
-                  "absolute top-0 left-1/2 -translate-x-1/2 w-0 h-0 border-l-[4px] border-r-[4px] border-b-[16px] border-l-transparent border-r-transparent",
-                  displayMode === "night-vision" ? "border-b-green-400" : "border-b-fire"
-                )} />
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-0 h-0 border-l-[4px] border-r-[4px] border-b-[16px] border-l-transparent border-r-transparent border-b-fire" />
                 <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-0 border-l-[4px] border-r-[4px] border-t-[16px] border-l-transparent border-r-transparent border-t-muted-foreground/50" />
               </div>
             </div>
 
             {/* Center dot */}
-            <div className={cn(
-              "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-2 h-2 rounded-full border",
-              displayMode === "night-vision" ? "bg-green-600 border-green-400" : "bg-accent border-accent-foreground"
-            )} />
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-2 h-2 rounded-full border bg-accent border-accent-foreground" />
           </div>
           
           {/* View Label with Cross Street Reference */}
@@ -409,92 +378,20 @@ export function TacticalViewport() {
           </div>
         </div>
 
-        {/* Viewport Controls - Right Side */}
-        <div className="absolute top-36 right-4 z-20 flex flex-col gap-1" onClick={(e) => e.stopPropagation()}>
-          <div className={cn("p-1.5 rounded-lg border flex flex-col gap-1", styles.panelBg)}>
-            <Button 
-              variant="ghost" 
-              size="sm" 
-              className={cn("h-8 w-8 p-0", displayMode === "night-vision" && "hover:bg-green-900/50")} 
-              onClick={handleZoomIn}
-              title="Zoom In"
-            >
-              <ZoomIn className={cn("w-4 h-4", displayMode === "night-vision" && "text-green-400")} />
-            </Button>
-            <Button 
-              variant="ghost" 
-              size="sm" 
-              className={cn("h-8 w-8 p-0", displayMode === "night-vision" && "hover:bg-green-900/50")} 
-              onClick={handleZoomOut}
-              title="Zoom Out"
-            >
-              <ZoomOut className={cn("w-4 h-4", displayMode === "night-vision" && "text-green-400")} />
-            </Button>
-            <div className={cn("h-px my-0.5", displayMode === "night-vision" ? "bg-green-900" : "bg-border")} />
-            <Button 
-              variant="ghost" 
-              size="sm" 
-              className={cn("h-8 w-8 p-0", displayMode === "night-vision" && "hover:bg-green-900/50")} 
-              onClick={handleRotateLeft}
-              title="Rotate Left"
-            >
-              <RotateCcw className={cn("w-4 h-4", displayMode === "night-vision" && "text-green-400")} />
-            </Button>
-            <Button 
-              variant="ghost" 
-              size="sm" 
-              className={cn("h-8 w-8 p-0", displayMode === "night-vision" && "hover:bg-green-900/50")} 
-              onClick={handleRotateRight}
-              title="Rotate Right"
-            >
-              <RotateCw className={cn("w-4 h-4", displayMode === "night-vision" && "text-green-400")} />
-            </Button>
-            <div className={cn("h-px my-0.5", displayMode === "night-vision" ? "bg-green-900" : "bg-border")} />
-            <Button 
-              variant={panMode ? "secondary" : "ghost"} 
-              size="sm" 
-              className={cn(
-                "h-8 w-8 p-0", 
-                panMode && (displayMode === "night-vision" ? "bg-green-900/50 text-green-300" : "bg-accent text-accent-foreground"),
-                displayMode === "night-vision" && "hover:bg-green-900/50"
-              )} 
-              onClick={() => setPanMode(!panMode)}
-              title="Pan Mode"
-            >
-              <Move className={cn("w-4 h-4", displayMode === "night-vision" && "text-green-400")} />
-            </Button>
-            <Button 
-              variant="ghost" 
-              size="sm" 
-              className={cn("h-8 w-8 p-0", displayMode === "night-vision" && "hover:bg-green-900/50")} 
-              onClick={resetViewport}
-              title="Reset View"
-            >
-              <Home className={cn("w-4 h-4", displayMode === "night-vision" && "text-green-400")} />
-            </Button>
-          </div>
-        </div>
-
-        {/* Sector Buttons - Bottom Left */}
-        <div className="absolute bottom-4 left-4 z-20" onClick={(e) => e.stopPropagation()}>
+        {/* Sector Buttons - Right Side (where zoom controls were) */}
+        <div className="absolute top-36 right-4 z-20" onClick={(e) => e.stopPropagation()}>
           <div className={cn("p-2 rounded-lg border", styles.panelBg)}>
             <div className={cn("text-[9px] uppercase tracking-wider mb-2", styles.mutedText)}>Select View</div>
-            <div className="grid grid-cols-2 gap-1">
+            <div className="flex flex-col gap-1">
               {sectors.map((sector) => (
                 <button
                   key={sector}
                   onClick={() => goToSector(sector)}
                   className={cn(
-                    "px-2 py-1.5 rounded text-[10px] font-medium transition-all duration-200",
+                    "px-3 py-1.5 rounded text-[10px] font-medium transition-all duration-200 text-left",
                     selectedSector === sector && !isFreeRotate
-                      ? displayMode === "night-vision" 
-                        ? "bg-green-900/50 text-green-300" 
-                        : "bg-accent text-accent-foreground"
-                      : cn(
-                          displayMode === "night-vision" 
-                            ? "bg-green-950/50 text-green-500 hover:bg-green-900/30 hover:text-green-300" 
-                            : "bg-secondary/50 text-muted-foreground hover:bg-secondary hover:text-foreground"
-                        )
+                      ? "bg-accent text-accent-foreground"
+                      : cn(styles.mutedText, "hover:bg-secondary hover:text-foreground")
                   )}
                 >
                   {sectorLabels[sector]}
@@ -504,12 +401,7 @@ export function TacticalViewport() {
             {isFreeRotate && (
               <button
                 onClick={resetViewport}
-                className={cn(
-                  "mt-2 w-full px-2 py-1.5 rounded text-[10px] font-medium transition-all duration-200",
-                  displayMode === "night-vision" 
-                    ? "bg-green-800/50 text-green-300 hover:bg-green-700/50" 
-                    : "bg-fire/20 text-fire hover:bg-fire/30"
-                )}
+                className="mt-2 w-full px-2 py-1 rounded text-[9px] font-medium bg-fire/20 text-fire border border-fire/30 hover:bg-fire/30 transition-all"
               >
                 Reset to Alpha
               </button>
@@ -517,29 +409,21 @@ export function TacticalViewport() {
           </div>
         </div>
 
-        {/* Scene Status - Bottom Center */}
-        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-10" onClick={(e) => e.stopPropagation()}>
-          <div className={cn("px-4 py-2 rounded-lg text-center border", styles.panelBg)}>
-            <span className={cn("text-[10px] block", styles.mutedText)}>{currentEvent.label}</span>
-            <span className={cn("text-xs font-medium", styles.textColor)}>{currentEvent.sceneNote}</span>
-          </div>
-        </div>
-
-        {/* Isometric Container */}
-        <div className="absolute inset-0 flex items-center justify-center" style={{ perspective: "1000px" }}>
-          <div 
-            className="relative transition-transform duration-300 ease-out"
-            style={{ 
-              transform: `
-                translateX(${viewportTransform.panX}px) 
-                translateY(${viewportTransform.panY}px) 
-                rotateX(${viewportTransform.rotateX}deg) 
-                rotateZ(${viewportTransform.rotateZ}deg) 
-                scale(${viewportTransform.zoom})
-              `,
-              transformStyle: "preserve-3d"
-            }}
-          >
+        {/* Isometric Scene Container */}
+        <div 
+          className="absolute inset-0 flex items-center justify-center transition-transform duration-300"
+          style={{
+            transform: `
+              perspective(1200px) 
+              rotateX(${viewportTransform.rotateX}deg) 
+              rotateZ(${viewportTransform.rotateZ}deg)
+              scale(${viewportTransform.zoom})
+              translate(${viewportTransform.panX}px, ${viewportTransform.panY}px)
+            `,
+            transformStyle: 'preserve-3d'
+          }}
+        >
+          <div className="relative w-64 h-64">
             {/* Street Grid - Fixed Cross Street Anchors */}
             {/* These streets are FIXED anchor points that determine real-world orientation */}
             <div className="absolute -left-48 -top-48 w-[500px] h-[500px]">

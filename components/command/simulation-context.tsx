@@ -5,7 +5,7 @@ import { createContext, useContext, useState, ReactNode } from "react"
 export type SectorView = "alpha" | "bravo" | "charlie" | "delta" | "roof" | "overhead" | "interior"
 export type MapSource = "tactical" | "satellite" | "google-maps" | "google-earth"
 export type TimelineEventId = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8
-export type DisplayMode = "dark" | "light" | "night-vision"
+export type DisplayMode = "dark" | "light"
 
 // Fixed cross street anchor configuration for 2824 W Marquette Rd, Chicago, IL 60629
 // These anchors lock the map orientation to real-world coordinates
