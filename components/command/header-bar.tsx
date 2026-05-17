@@ -10,7 +10,7 @@ const displayModes: { id: DisplayMode; label: string; icon: typeof Sun; descript
 ]
 
 export function HeaderBar() {
-  const { displayMode, setDisplayMode } = useSimulation()
+  const { displayMode, setDisplayMode, viewMode, setViewMode } = useSimulation()
 
   const getDisplayModeStyles = () => {
     switch (displayMode) {
@@ -83,6 +83,30 @@ export function HeaderBar() {
           <div className={cn("px-3 py-1 rounded border", styles.statusBg)}>
             <span className={cn("text-xs font-bold uppercase tracking-wider", styles.statusText)}>Working Fire</span>
           </div>
+        </div>
+
+        {/* View Mode Toggle */}
+        <div className={cn("flex items-center gap-1 p-1 rounded-lg border", styles.toggleBg)}>
+          <button
+            onClick={() => setViewMode("sector")}
+            className={cn(
+              "flex items-center gap-1.5 px-2.5 py-1.5 rounded text-[10px] font-medium transition-all duration-200",
+              viewMode === "sector" ? styles.toggleActive : styles.toggleInactive
+            )}
+            title="Sector view by building side"
+          >
+            Sector
+          </button>
+          <button
+            onClick={() => setViewMode("floor")}
+            className={cn(
+              "flex items-center gap-1.5 px-2.5 py-1.5 rounded text-[10px] font-medium transition-all duration-200",
+              viewMode === "floor" ? styles.toggleActive : styles.toggleInactive
+            )}
+            title="Floor view by building level"
+          >
+            Floor
+          </button>
         </div>
 
         {/* Address */}

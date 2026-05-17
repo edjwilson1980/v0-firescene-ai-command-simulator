@@ -6,7 +6,8 @@ import {
   Map, Satellite, Globe, Grid3x3, Home, Move, Crosshair
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { useSimulation, SectorView, MapSource, incidentLocation } from "./simulation-context"
+import { useSimulation, SectorView, FloorView, MapSource, incidentLocation } from "./simulation-context"
+import { FloorTacticalNotes } from "./floor-tactical-notes"
 import { cn } from "@/lib/utils"
 
 const sectorLabels: Record<SectorView, string> = {
@@ -17,6 +18,15 @@ const sectorLabels: Record<SectorView, string> = {
   roof: "Roof View",
   overhead: "Overhead View",
   interior: "Interior Slice",
+}
+
+const floorLabels: Record<FloorView, string> = {
+  basement: "Basement",
+  floor1: "Floor 1",
+  floor2: "Floor 2",
+  floor3: "Floor 3",
+  attic: "Attic",
+  roof: "Roof",
 }
 
 const compassRotationForAngle = (rotateZ: number): number => {
@@ -67,7 +77,8 @@ export function TacticalViewport() {
     currentEvent,
     viewportTransform, setViewportTransform,
     isFreeRotate, setIsFreeRotate,
-    resetViewport, goToSector,
+    resetViewport, goToSector, goToFloor,
+    viewMode, selectedFloor,
     displayMode
   } = useSimulation()
   
@@ -83,6 +94,7 @@ export function TacticalViewport() {
 
   const mapSources: MapSource[] = ["tactical", "satellite", "google-maps", "google-earth"]
   const sectors: SectorView[] = ["alpha", "bravo", "charlie", "delta", "roof", "overhead", "interior"]
+  const floors: FloorView[] = ["basement", "floor1", "floor2", "floor3", "attic", "roof"]
 
   // Handle mouse/touch drag for rotation
   const handleDragStart = useCallback((clientX: number, clientY: number) => {
@@ -375,24 +387,43 @@ export function TacticalViewport() {
           </div>
         </div>
 
-        {/* Sector Buttons - Top Left (compact/skidier styling) */}
+        {/* Sector/Floor Buttons - Top Left (compact/skidier styling) */}
         <div className="absolute top-4 left-4 z-20" onClick={(e) => e.stopPropagation()}>
           <div className={cn("p-1.5 rounded border", styles.panelBg)}>
             <div className="flex flex-col gap-0.5">
-              {sectors.map((sector) => (
-                <button
-                  key={sector}
-                  onClick={() => goToSector(sector)}
-                  className={cn(
-                    "px-2 py-1 rounded text-[9px] font-bold transition-all duration-200 text-left",
-                    selectedSector === sector && !isFreeRotate
-                      ? "bg-accent text-accent-foreground"
-                      : cn(styles.mutedText, "hover:bg-secondary hover:text-foreground")
-                  )}
-                >
-                  {sectorLabels[sector]}
-                </button>
-              ))}
+              {viewMode === "sector" ? (
+                // Sector View Buttons
+                sectors.map((sector) => (
+                  <button
+                    key={sector}
+                    onClick={() => goToSector(sector)}
+                    className={cn(
+                      "px-2 py-1 rounded text-[9px] font-bold transition-all duration-200 text-left",
+                      selectedSector === sector && !isFreeRotate
+                        ? "bg-accent text-accent-foreground"
+                        : cn(styles.mutedText, "hover:bg-secondary hover:text-foreground")
+                    )}
+                  >
+                    {sectorLabels[sector]}
+                  </button>
+                ))
+              ) : (
+                // Floor View Buttons
+                floors.map((floor) => (
+                  <button
+                    key={floor}
+                    onClick={() => goToFloor(floor)}
+                    className={cn(
+                      "px-2 py-1 rounded text-[9px] font-bold transition-all duration-200 text-left",
+                      selectedFloor === floor && !isFreeRotate
+                        ? "bg-accent text-accent-foreground"
+                        : cn(styles.mutedText, "hover:bg-secondary hover:text-foreground")
+                    )}
+                  >
+                    {floorLabels[floor]}
+                  </button>
+                ))
+              )}
             </div>
             {isFreeRotate && (
               <button
@@ -426,7 +457,6 @@ export function TacticalViewport() {
               {/* W MARQUETTE RD - Primary E-W Street (runs through incident address) */}
               <div className={cn(
                 "absolute top-1/2 -translate-y-1/2 w-full h-16 border-y transition-colors duration-500",
-                displayMode === "night-vision" ? "bg-green-950/60 border-green-900/50" :
                 mapSource === "satellite" ? "bg-slate-700/60 border-slate-600/50" : 
                 mapSource === "google-earth" ? "bg-slate-800/60 border-slate-700/50" : 
                 mapSource === "google-maps" ? "bg-slate-200/80 border-slate-300/60" :
@@ -869,6 +899,9 @@ export function TacticalViewport() {
           </div>
         </div>
       </div>
+
+      {/* Floor Tactical Notes - Shows when in Floor View mode */}
+      <FloorTacticalNotes />
     </div>
   )
 }

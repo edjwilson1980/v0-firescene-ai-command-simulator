@@ -3,6 +3,8 @@
 import { createContext, useContext, useState, ReactNode } from "react"
 
 export type SectorView = "alpha" | "bravo" | "charlie" | "delta" | "roof" | "overhead" | "interior"
+export type FloorView = "basement" | "floor1" | "floor2" | "floor3" | "attic" | "roof"
+export type ViewMode = "sector" | "floor"
 export type MapSource = "tactical" | "satellite" | "google-maps" | "google-earth"
 export type TimelineEventId = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8
 export type DisplayMode = "dark" | "light"
@@ -106,9 +108,22 @@ const defaultSectorTransforms: Record<SectorView, ViewportTransform> = {
   interior: { rotateX: 55, rotateZ: -45, zoom: 1.3, panX: 0, panY: 0 },
 }
 
+const defaultFloorTransforms: Record<FloorView, ViewportTransform> = {
+  basement: { rotateX: 65, rotateZ: -45, zoom: 0.9, panX: 0, panY: 0 },
+  floor1: { rotateX: 65, rotateZ: -45, zoom: 1, panX: 0, panY: 0 },
+  floor2: { rotateX: 65, rotateZ: -45, zoom: 1, panX: 0, panY: 0 },
+  floor3: { rotateX: 65, rotateZ: -45, zoom: 1, panX: 0, panY: 0 },
+  attic: { rotateX: 65, rotateZ: -45, zoom: 0.95, panX: 0, panY: 0 },
+  roof: { rotateX: 90, rotateZ: -45, zoom: 1.15, panX: 0, panY: 0 },
+}
+
 interface SimulationState {
   selectedSector: SectorView
   setSelectedSector: (sector: SectorView) => void
+  selectedFloor: FloorView
+  setSelectedFloor: (floor: FloorView) => void
+  viewMode: ViewMode
+  setViewMode: (mode: ViewMode) => void
   mapSource: MapSource
   setMapSource: (source: MapSource) => void
   selectedEventId: TimelineEventId
@@ -124,6 +139,7 @@ interface SimulationState {
   setIsFreeRotate: (free: boolean) => void
   resetViewport: () => void
   goToSector: (sector: SectorView) => void
+  goToFloor: (floor: FloorView) => void
   voiceNotes: VoiceNote[]
   addVoiceNote: (note: VoiceNote) => void
 }
@@ -132,6 +148,8 @@ const SimulationContext = createContext<SimulationState | null>(null)
 
 export function SimulationProvider({ children }: { children: ReactNode }) {
   const [selectedSector, setSelectedSector] = useState<SectorView>("alpha")
+  const [selectedFloor, setSelectedFloor] = useState<FloorView>("floor1")
+  const [viewMode, setViewMode] = useState<ViewMode>("sector")
   const [mapSource, setMapSource] = useState<MapSource>("tactical")
   const [selectedEventId, setSelectedEventId] = useState<TimelineEventId>(7)
   const [isPlaying, setIsPlaying] = useState(false)
@@ -143,14 +161,25 @@ export function SimulationProvider({ children }: { children: ReactNode }) {
   const currentEvent = timelineEvents.find(e => e.id === selectedEventId) || timelineEvents[0]
 
   const resetViewport = () => {
-    setSelectedSector("alpha")
-    setViewportTransform(defaultSectorTransforms.alpha)
+    if (viewMode === "sector") {
+      setSelectedSector("alpha")
+      setViewportTransform(defaultSectorTransforms.alpha)
+    } else {
+      setSelectedFloor("floor1")
+      setViewportTransform(defaultFloorTransforms.floor1)
+    }
     setIsFreeRotate(false)
   }
 
   const goToSector = (sector: SectorView) => {
     setSelectedSector(sector)
     setViewportTransform(defaultSectorTransforms[sector])
+    setIsFreeRotate(false)
+  }
+
+  const goToFloor = (floor: FloorView) => {
+    setSelectedFloor(floor)
+    setViewportTransform(defaultFloorTransforms[floor])
     setIsFreeRotate(false)
   }
 
@@ -162,6 +191,10 @@ export function SimulationProvider({ children }: { children: ReactNode }) {
     <SimulationContext.Provider value={{
       selectedSector,
       setSelectedSector,
+      selectedFloor,
+      setSelectedFloor,
+      viewMode,
+      setViewMode,
       mapSource,
       setMapSource,
       selectedEventId,
@@ -177,6 +210,7 @@ export function SimulationProvider({ children }: { children: ReactNode }) {
       setIsFreeRotate,
       resetViewport,
       goToSector,
+      goToFloor,
       voiceNotes,
       addVoiceNote,
     }}>
