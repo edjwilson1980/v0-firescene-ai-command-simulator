@@ -1,9 +1,10 @@
 "use client"
 
 import { useState } from "react"
-import { Plus, AlertTriangle, Camera, Users, RotateCcw, Download, X, Truck, Droplets, Radio, Ambulance } from "lucide-react"
+import { Plus, AlertTriangle, Camera, Users, RotateCcw, Download, X, Truck, Droplets, Radio, Ambulance, Mic } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useSimulation } from "./simulation-context"
+import { VoiceNoteRecorder } from "./voice-note-recorder"
 import { cn } from "@/lib/utils"
 
 // Units on scene derived from radio traffic
@@ -29,6 +30,7 @@ const actions = [
   { icon: AlertTriangle, label: "Add Hazard", variant: "destructive" as const, action: "addHazard" },
   { icon: Camera, label: "Snapshot", variant: "secondary" as const, action: "snapshot" },
   { icon: Users, label: "PAR Check", variant: "default" as const, action: "parCheck" },
+  { icon: Mic, label: "Voice Note", variant: "secondary" as const, action: "voiceNote" },
   { icon: RotateCcw, label: "Replay", variant: "secondary" as const, action: "replay" },
   { icon: Download, label: "Export", variant: "secondary" as const, action: "export" },
 ]
@@ -36,6 +38,7 @@ const actions = [
 export function CommandActions() {
   const { displayMode } = useSimulation()
   const [showPARModal, setShowPARModal] = useState(false)
+  const [showVoiceRecorder, setShowVoiceRecorder] = useState(false)
 
   const getDisplayModeStyles = () => {
     switch (displayMode) {
@@ -119,6 +122,8 @@ export function CommandActions() {
   const handleAction = (action: string) => {
     if (action === "parCheck") {
       setShowPARModal(true)
+    } else if (action === "voiceNote") {
+      setShowVoiceRecorder(true)
     }
   }
 
@@ -289,6 +294,12 @@ export function CommandActions() {
           </div>
         </div>
       )}
+
+      {/* Voice Note Recorder Modal */}
+      <VoiceNoteRecorder 
+        isOpen={showVoiceRecorder} 
+        onClose={() => setShowVoiceRecorder(false)} 
+      />
     </>
   )
 }

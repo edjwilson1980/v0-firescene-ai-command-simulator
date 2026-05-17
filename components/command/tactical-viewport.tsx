@@ -3,11 +3,10 @@
 import { useRef, useState, useCallback, useEffect } from "react"
 import { 
   ZoomIn, ZoomOut, RotateCcw, RotateCw, Layers, 
-  Map, Satellite, Globe, Grid3x3, Home, Move, Crosshair, Mic
+  Map, Satellite, Globe, Grid3x3, Home, Move, Crosshair
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useSimulation, SectorView, MapSource, incidentLocation } from "./simulation-context"
-import { VoiceNoteRecorder } from "./voice-note-recorder"
 import { cn } from "@/lib/utils"
 
 const sectorLabels: Record<SectorView, string> = {
@@ -77,7 +76,6 @@ export function TacticalViewport() {
   const [isPanning, setIsPanning] = useState(false)
   const [panMode, setPanMode] = useState(false)
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 })
-  const [showVoiceRecorder, setShowVoiceRecorder] = useState(false)
   
   const currentMapStyle = mapSourceStyles[mapSource]
   const isInterior = selectedSector === "interior"
@@ -381,7 +379,7 @@ export function TacticalViewport() {
         </div>
 
         {/* Sector Buttons - Right Side (where zoom controls were) */}
-        <div className="absolute top-36 right-4 z-20 flex flex-col gap-2" onClick={(e) => e.stopPropagation()}>
+        <div className="absolute top-36 right-4 z-20" onClick={(e) => e.stopPropagation()}>
           <div className={cn("p-2 rounded-lg border", styles.panelBg)}>
             <div className={cn("text-[9px] uppercase tracking-wider mb-2", styles.mutedText)}>Select View</div>
             <div className="flex flex-col gap-1">
@@ -409,27 +407,7 @@ export function TacticalViewport() {
               </button>
             )}
           </div>
-          
-          {/* Voice Note Button */}
-          <button
-            onClick={() => setShowVoiceRecorder(true)}
-            className={cn(
-              "p-2 rounded-lg border flex items-center justify-center gap-2 transition-all duration-200 text-[10px] font-medium",
-              styles.panelBg,
-              "hover:bg-accent/20 text-accent hover:text-accent-foreground"
-            )}
-            title="Record a voice note"
-          >
-            <Mic className="w-4 h-4" />
-            <span className="hidden sm:inline">Voice Note</span>
-          </button>
         </div>
-
-        {/* Voice Note Recorder Modal */}
-        <VoiceNoteRecorder 
-          isOpen={showVoiceRecorder} 
-          onClose={() => setShowVoiceRecorder(false)} 
-        />
 
         {/* Isometric Scene Container */}
         <div 
