@@ -1,6 +1,8 @@
 "use client"
 
 import { Radio, Truck, Users, Droplets, AlertTriangle, Shield, Search } from "lucide-react"
+import { useSimulation } from "./simulation-context"
+import { cn } from "@/lib/utils"
 
 interface RadioMessage {
   id: string
@@ -34,7 +36,21 @@ const getIcon = (type: RadioMessage["type"]) => {
   }
 }
 
-const getTypeColor = (type: RadioMessage["type"]) => {
+const getTypeColor = (type: RadioMessage["type"], displayMode: string) => {
+  if (displayMode === "night-vision") {
+    return "text-green-400 border-green-700/50 bg-green-900/30"
+  }
+  if (displayMode === "light") {
+    switch (type) {
+      case "engine": return "text-blue-700 border-blue-300 bg-blue-100"
+      case "truck": return "text-amber-700 border-amber-300 bg-amber-100"
+      case "command": return "text-purple-700 border-purple-300 bg-purple-100"
+      case "hazard": return "text-red-700 border-red-300 bg-red-100"
+      case "search": return "text-emerald-700 border-emerald-300 bg-emerald-100"
+      case "ems": return "text-cyan-700 border-cyan-300 bg-cyan-100"
+      default: return "text-slate-700 border-slate-300 bg-slate-100"
+    }
+  }
   switch (type) {
     case "engine": return "text-water border-water/30 bg-water/10"
     case "truck": return "text-hazard border-hazard/30 bg-hazard/10"
@@ -47,17 +63,64 @@ const getTypeColor = (type: RadioMessage["type"]) => {
 }
 
 export function RadioPanel() {
+  const { displayMode } = useSimulation()
+
+  const getDisplayModeStyles = () => {
+    switch (displayMode) {
+      case "light":
+        return {
+          containerBg: "bg-white/95 border-slate-300",
+          headerBg: "border-slate-300",
+          textColor: "text-slate-900",
+          mutedText: "text-slate-600",
+          cardBg: "bg-slate-100/80 border-slate-200",
+          activeBg: "bg-white border-purple-300",
+          liveColor: "text-red-600",
+          liveBg: "bg-red-600",
+        }
+      case "night-vision":
+        return {
+          containerBg: "bg-black/95 border-green-900",
+          headerBg: "border-green-900",
+          textColor: "text-green-400",
+          mutedText: "text-green-600",
+          cardBg: "bg-green-950/50 border-green-900/50",
+          activeBg: "bg-green-900/50 border-green-600/50",
+          liveColor: "text-green-400",
+          liveBg: "bg-green-500",
+        }
+      default:
+        return {
+          containerBg: "tactical-card",
+          headerBg: "border-border",
+          textColor: "text-foreground",
+          mutedText: "text-muted-foreground",
+          cardBg: "bg-secondary/50 border-border/50",
+          activeBg: "tactical-glass border-radio/40 glow-radio",
+          liveColor: "text-live",
+          liveBg: "bg-live",
+        }
+    }
+  }
+
+  const styles = getDisplayModeStyles()
+
   return (
-    <div className="w-72 flex flex-col tactical-card overflow-hidden">
+    <div className={cn(
+      "w-72 flex flex-col overflow-hidden border",
+      displayMode === "light" ? styles.containerBg : "",
+      displayMode === "night-vision" ? styles.containerBg : "",
+      displayMode === "dark" && "tactical-card"
+    )}>
       {/* Header */}
-      <div className="p-3 border-b border-border flex items-center justify-between">
+      <div className={cn("p-3 border-b flex items-center justify-between", styles.headerBg)}>
         <div className="flex items-center gap-2">
-          <Radio className="w-4 h-4 text-radio" />
-          <span className="text-sm font-semibold text-foreground uppercase tracking-wide">Radio Traffic</span>
+          <Radio className={cn("w-4 h-4", displayMode === "night-vision" ? "text-green-500" : displayMode === "light" ? "text-purple-600" : "text-radio")} />
+          <span className={cn("text-sm font-semibold uppercase tracking-wide", styles.textColor)}>Radio Traffic</span>
         </div>
         <div className="flex items-center gap-1.5">
-          <div className="w-2 h-2 rounded-full bg-live animate-pulse" />
-          <span className="text-[10px] text-live uppercase font-medium">Live</span>
+          <div className={cn("w-2 h-2 rounded-full animate-pulse", styles.liveBg)} />
+          <span className={cn("text-[10px] uppercase font-medium", styles.liveColor)}>Live</span>
         </div>
       </div>
 
@@ -66,18 +129,19 @@ export function RadioPanel() {
         {radioMessages.map((msg, index) => (
           <div
             key={msg.id}
-            className={`p-2.5 rounded-lg border ${
-              index === 0 ? "tactical-glass border-radio/40 glow-radio" : "bg-secondary/50 border-border/50"
-            }`}
+            className={cn(
+              "p-2.5 rounded-lg border",
+              index === 0 ? styles.activeBg : styles.cardBg
+            )}
           >
             <div className="flex items-center justify-between mb-1.5">
-              <div className={`flex items-center gap-1.5 px-1.5 py-0.5 rounded text-[10px] font-medium border ${getTypeColor(msg.type)}`}>
+              <div className={cn("flex items-center gap-1.5 px-1.5 py-0.5 rounded text-[10px] font-medium border", getTypeColor(msg.type, displayMode))}>
                 {getIcon(msg.type)}
                 <span>{msg.unit}</span>
               </div>
-              <span className="text-[10px] text-muted-foreground font-mono">{msg.timestamp}</span>
+              <span className={cn("text-[10px] font-mono", styles.mutedText)}>{msg.timestamp}</span>
             </div>
-            <p className={`text-xs leading-relaxed ${index === 0 ? "text-foreground" : "text-muted-foreground"}`}>
+            <p className={cn("text-xs leading-relaxed", index === 0 ? styles.textColor : styles.mutedText)}>
               {msg.message}
             </p>
           </div>
@@ -85,8 +149,8 @@ export function RadioPanel() {
       </div>
 
       {/* Footer */}
-      <div className="p-2 border-t border-border">
-        <div className="flex items-center justify-between text-[10px] text-muted-foreground">
+      <div className={cn("p-2 border-t", styles.headerBg)}>
+        <div className={cn("flex items-center justify-between text-[10px]", styles.mutedText)}>
           <span>Channel: MAIN-TAC 1</span>
           <span className="flex items-center gap-1">
             <Shield className="w-3 h-3" />

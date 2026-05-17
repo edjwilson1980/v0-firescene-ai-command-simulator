@@ -5,6 +5,7 @@ import { createContext, useContext, useState, ReactNode } from "react"
 export type SectorView = "alpha" | "bravo" | "charlie" | "delta" | "roof" | "overhead" | "interior"
 export type MapSource = "tactical" | "satellite" | "google-maps" | "google-earth"
 export type TimelineEventId = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8
+export type DisplayMode = "dark" | "light" | "night-vision"
 
 export interface TimelineEvent {
   id: TimelineEventId
@@ -26,6 +27,24 @@ export const timelineEvents: TimelineEvent[] = [
   { id: 8, time: "14:24", label: "Primary Clear", description: "Primary search all clear, all floors", fireStatus: "contained", sceneNote: "No victims found" },
 ]
 
+export interface ViewportTransform {
+  rotateX: number
+  rotateZ: number
+  zoom: number
+  panX: number
+  panY: number
+}
+
+const defaultSectorTransforms: Record<SectorView, ViewportTransform> = {
+  alpha: { rotateX: 55, rotateZ: -45, zoom: 1, panX: 0, panY: 0 },
+  bravo: { rotateX: 55, rotateZ: -135, zoom: 1, panX: 0, panY: 0 },
+  charlie: { rotateX: 55, rotateZ: 135, zoom: 1, panX: 0, panY: 0 },
+  delta: { rotateX: 55, rotateZ: 45, zoom: 1, panX: 0, panY: 0 },
+  roof: { rotateX: 90, rotateZ: -45, zoom: 1.1, panX: 0, panY: 0 },
+  overhead: { rotateX: 90, rotateZ: 0, zoom: 1.1, panX: 0, panY: 0 },
+  interior: { rotateX: 55, rotateZ: -45, zoom: 1.3, panX: 0, panY: 0 },
+}
+
 interface SimulationState {
   selectedSector: SectorView
   setSelectedSector: (sector: SectorView) => void
@@ -36,6 +55,14 @@ interface SimulationState {
   currentEvent: TimelineEvent
   isPlaying: boolean
   setIsPlaying: (playing: boolean) => void
+  displayMode: DisplayMode
+  setDisplayMode: (mode: DisplayMode) => void
+  viewportTransform: ViewportTransform
+  setViewportTransform: (transform: ViewportTransform) => void
+  isFreeRotate: boolean
+  setIsFreeRotate: (free: boolean) => void
+  resetViewport: () => void
+  goToSector: (sector: SectorView) => void
 }
 
 const SimulationContext = createContext<SimulationState | null>(null)
@@ -45,8 +72,23 @@ export function SimulationProvider({ children }: { children: ReactNode }) {
   const [mapSource, setMapSource] = useState<MapSource>("tactical")
   const [selectedEventId, setSelectedEventId] = useState<TimelineEventId>(7)
   const [isPlaying, setIsPlaying] = useState(false)
+  const [displayMode, setDisplayMode] = useState<DisplayMode>("dark")
+  const [viewportTransform, setViewportTransform] = useState<ViewportTransform>(defaultSectorTransforms.alpha)
+  const [isFreeRotate, setIsFreeRotate] = useState(false)
 
   const currentEvent = timelineEvents.find(e => e.id === selectedEventId) || timelineEvents[0]
+
+  const resetViewport = () => {
+    setSelectedSector("alpha")
+    setViewportTransform(defaultSectorTransforms.alpha)
+    setIsFreeRotate(false)
+  }
+
+  const goToSector = (sector: SectorView) => {
+    setSelectedSector(sector)
+    setViewportTransform(defaultSectorTransforms[sector])
+    setIsFreeRotate(false)
+  }
 
   return (
     <SimulationContext.Provider value={{
@@ -59,6 +101,14 @@ export function SimulationProvider({ children }: { children: ReactNode }) {
       currentEvent,
       isPlaying,
       setIsPlaying,
+      displayMode,
+      setDisplayMode,
+      viewportTransform,
+      setViewportTransform,
+      isFreeRotate,
+      setIsFreeRotate,
+      resetViewport,
+      goToSector,
     }}>
       {children}
     </SimulationContext.Provider>
