@@ -6,7 +6,7 @@ import {
   Map, Satellite, Globe, Grid3x3, Home, Move, Crosshair 
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { useSimulation, SectorView, MapSource } from "./simulation-context"
+import { useSimulation, SectorView, MapSource, incidentLocation } from "./simulation-context"
 import { cn } from "@/lib/utils"
 
 const sectorLabels: Record<SectorView, string> = {
@@ -364,7 +364,7 @@ export function TacticalViewport() {
               displayMode === "night-vision" ? "border-green-800/50" : "border-border/50"
             )} />
             
-            {/* Cardinal Directions */}
+            {/* Cardinal Directions - Fixed to true north based on cross street anchors */}
             <div 
               className="absolute inset-0 transition-transform duration-200"
               style={{ transform: `rotate(${compassRotationForAngle(viewportTransform.rotateZ)}deg)` }}
@@ -399,10 +399,13 @@ export function TacticalViewport() {
             )} />
           </div>
           
-          {/* View Label */}
+          {/* View Label with Cross Street Reference */}
           <div className={cn("mt-2 px-3 py-1.5 rounded text-center border", styles.panelBg)}>
             <span className={cn("text-[10px]", styles.mutedText)}>Viewing:</span>
             <span className={cn("text-xs font-medium ml-1", styles.textColor)}>{viewLabel}</span>
+            <div className={cn("text-[8px] mt-1 opacity-70", styles.mutedText)}>
+              Bearing: {incidentLocation.crossStreets.primary.name}
+            </div>
           </div>
         </div>
 
@@ -537,36 +540,131 @@ export function TacticalViewport() {
               transformStyle: "preserve-3d"
             }}
           >
-            {/* Street Grid */}
+            {/* Street Grid - Fixed Cross Street Anchors */}
+            {/* These streets are FIXED anchor points that determine real-world orientation */}
             <div className="absolute -left-48 -top-48 w-[500px] h-[500px]">
-              {/* Horizontal Street */}
+              {/* W MARQUETTE RD - Primary E-W Street (runs through incident address) */}
               <div className={cn(
                 "absolute top-1/2 -translate-y-1/2 w-full h-16 border-y transition-colors duration-500",
                 displayMode === "night-vision" ? "bg-green-950/60 border-green-900/50" :
-                mapSource === "satellite" ? "bg-slate-700/60 border-border/50" : 
-                mapSource === "google-earth" ? "bg-slate-800/60 border-border/50" : 
+                mapSource === "satellite" ? "bg-slate-700/60 border-slate-600/50" : 
+                mapSource === "google-earth" ? "bg-slate-800/60 border-slate-700/50" : 
+                mapSource === "google-maps" ? "bg-slate-200/80 border-slate-300/60" :
                 displayMode === "light" ? "bg-slate-400/60 border-slate-500/50" : "bg-secondary/60 border-border/50"
-              )} />
-              {/* Vertical Street */}
-              <div className={cn(
-                "absolute left-1/2 -translate-x-1/2 h-full w-16 border-x transition-colors duration-500",
-                displayMode === "night-vision" ? "bg-green-950/60 border-green-900/50" :
-                mapSource === "satellite" ? "bg-slate-700/60 border-border/50" : 
-                mapSource === "google-earth" ? "bg-slate-800/60 border-border/50" : 
-                displayMode === "light" ? "bg-slate-400/60 border-slate-500/50" : "bg-secondary/60 border-border/50"
-              )} />
+              )}>
+                {/* Street name label - WEST end (fixed anchor) */}
+                <div className={cn(
+                  "absolute left-2 top-1/2 -translate-y-1/2 px-2 py-1 rounded text-[9px] font-bold uppercase tracking-wider whitespace-nowrap border",
+                  displayMode === "night-vision" ? "bg-green-950 border-green-700 text-green-400" : 
+                  mapSource === "google-maps" ? "bg-white border-slate-300 text-slate-700" :
+                  "bg-card/95 border-border text-foreground"
+                )}>
+                  <span className="opacity-60 mr-1">←</span> W Marquette Rd
+                </div>
+                {/* Street name label - EAST end (fixed anchor) */}
+                <div className={cn(
+                  "absolute right-2 top-1/2 -translate-y-1/2 px-2 py-1 rounded text-[9px] font-bold uppercase tracking-wider whitespace-nowrap border",
+                  displayMode === "night-vision" ? "bg-green-950 border-green-700 text-green-400" : 
+                  mapSource === "google-maps" ? "bg-white border-slate-300 text-slate-700" :
+                  "bg-card/95 border-border text-foreground"
+                )}>
+                  W Marquette Rd <span className="opacity-60 ml-1">→</span>
+                </div>
+                {/* Center line markings */}
+                <div className={cn(
+                  "absolute top-1/2 -translate-y-1/2 left-0 right-0 h-0.5",
+                  displayMode === "night-vision" ? "bg-green-600/30" : 
+                  mapSource === "google-maps" ? "bg-yellow-500/40" : "bg-hazard/20"
+                )} style={{ backgroundImage: "repeating-linear-gradient(90deg, transparent, transparent 10px, currentColor 10px, currentColor 20px)" }} />
+              </div>
               
-              {/* Sidewalks */}
+              {/* S CALIFORNIA AVE - Secondary N-S Street (west cross street - fixed anchor) */}
+              <div className={cn(
+                "absolute left-[30%] -translate-x-1/2 h-full w-14 border-x transition-colors duration-500",
+                displayMode === "night-vision" ? "bg-green-950/60 border-green-900/50" :
+                mapSource === "satellite" ? "bg-slate-700/60 border-slate-600/50" : 
+                mapSource === "google-earth" ? "bg-slate-800/60 border-slate-700/50" : 
+                mapSource === "google-maps" ? "bg-slate-200/80 border-slate-300/60" :
+                displayMode === "light" ? "bg-slate-400/60 border-slate-500/50" : "bg-secondary/60 border-border/50"
+              )}>
+                {/* Street name label - NORTH end (fixed anchor) */}
+                <div className={cn(
+                  "absolute top-2 left-1/2 -translate-x-1/2 px-2 py-1 rounded text-[9px] font-bold uppercase tracking-wider whitespace-nowrap border",
+                  displayMode === "night-vision" ? "bg-green-950 border-green-700 text-green-400" : 
+                  mapSource === "google-maps" ? "bg-white border-slate-300 text-slate-700" :
+                  "bg-card/95 border-border text-foreground"
+                )} style={{ writingMode: "vertical-rl", textOrientation: "mixed", transform: "translateX(-50%) rotate(180deg)" }}>
+                  S California Ave <span className="opacity-60 ml-1">↑</span>
+                </div>
+                {/* Street name label - SOUTH end (fixed anchor) */}
+                <div className={cn(
+                  "absolute bottom-2 left-1/2 -translate-x-1/2 px-2 py-1 rounded text-[9px] font-bold uppercase tracking-wider whitespace-nowrap border",
+                  displayMode === "night-vision" ? "bg-green-950 border-green-700 text-green-400" : 
+                  mapSource === "google-maps" ? "bg-white border-slate-300 text-slate-700" :
+                  "bg-card/95 border-border text-foreground"
+                )} style={{ writingMode: "vertical-rl", textOrientation: "mixed", transform: "translateX(-50%) rotate(180deg)" }}>
+                  <span className="opacity-60 mr-1">↓</span> S California Ave
+                </div>
+              </div>
+
+              {/* S MOZART ST - Tertiary N-S Street (east cross street - fixed anchor) */}
+              <div className={cn(
+                "absolute left-[70%] -translate-x-1/2 h-full w-14 border-x transition-colors duration-500",
+                displayMode === "night-vision" ? "bg-green-950/60 border-green-900/50" :
+                mapSource === "satellite" ? "bg-slate-700/60 border-slate-600/50" : 
+                mapSource === "google-earth" ? "bg-slate-800/60 border-slate-700/50" : 
+                mapSource === "google-maps" ? "bg-slate-200/80 border-slate-300/60" :
+                displayMode === "light" ? "bg-slate-400/60 border-slate-500/50" : "bg-secondary/60 border-border/50"
+              )}>
+                {/* Street name label - NORTH end (fixed anchor) */}
+                <div className={cn(
+                  "absolute top-2 left-1/2 -translate-x-1/2 px-2 py-1 rounded text-[9px] font-bold uppercase tracking-wider whitespace-nowrap border",
+                  displayMode === "night-vision" ? "bg-green-950 border-green-700 text-green-400" : 
+                  mapSource === "google-maps" ? "bg-white border-slate-300 text-slate-700" :
+                  "bg-card/95 border-border text-foreground"
+                )} style={{ writingMode: "vertical-rl", textOrientation: "mixed", transform: "translateX(-50%) rotate(180deg)" }}>
+                  S Mozart St <span className="opacity-60 ml-1">↑</span>
+                </div>
+                {/* Street name label - SOUTH end (fixed anchor) */}
+                <div className={cn(
+                  "absolute bottom-2 left-1/2 -translate-x-1/2 px-2 py-1 rounded text-[9px] font-bold uppercase tracking-wider whitespace-nowrap border",
+                  displayMode === "night-vision" ? "bg-green-950 border-green-700 text-green-400" : 
+                  mapSource === "google-maps" ? "bg-white border-slate-300 text-slate-700" :
+                  "bg-card/95 border-border text-foreground"
+                )} style={{ writingMode: "vertical-rl", textOrientation: "mixed", transform: "translateX(-50%) rotate(180deg)" }}>
+                  <span className="opacity-60 mr-1">↓</span> S Mozart St
+                </div>
+              </div>
+              
+              {/* Sidewalks along Marquette */}
               <div className={cn(
                 "absolute top-1/2 -translate-y-[calc(50%+32px)] w-full h-3",
                 displayMode === "night-vision" ? "bg-green-900/40" : 
+                mapSource === "google-maps" ? "bg-slate-300/70" :
                 displayMode === "light" ? "bg-slate-300/60" : "bg-muted/40"
               )} />
               <div className={cn(
                 "absolute top-1/2 translate-y-[calc(50%+20px)] w-full h-3",
                 displayMode === "night-vision" ? "bg-green-900/40" : 
+                mapSource === "google-maps" ? "bg-slate-300/70" :
                 displayMode === "light" ? "bg-slate-300/60" : "bg-muted/40"
               )} />
+
+              {/* Cross Street Anchor Indicator - Shows fixed orientation */}
+              <div className={cn(
+                "absolute top-4 right-4 px-3 py-2 rounded-lg border text-[8px] font-medium",
+                displayMode === "night-vision" ? "bg-green-950/90 border-green-700 text-green-400" : 
+                mapSource === "google-maps" ? "bg-white/95 border-slate-300 text-slate-600" :
+                "bg-card/95 border-border text-muted-foreground"
+              )}>
+                <div className="flex items-center gap-2 mb-1">
+                  <div className={cn("w-2 h-2 rounded-full", displayMode === "night-vision" ? "bg-green-500" : "bg-safe")} />
+                  <span>Cross Streets Locked</span>
+                </div>
+                <div className={cn("text-[7px] opacity-70", displayMode === "night-vision" ? "text-green-500" : "")}>
+                  Marquette × California/Mozart
+                </div>
+              </div>
             </div>
 
             {/* Main Fire Building */}
@@ -832,7 +930,7 @@ export function TacticalViewport() {
               <span className={cn("absolute -bottom-4 left-1/2 -translate-x-1/2 text-[8px]", styles.mutedText)}>EXPOSURE D</span>
             </div>
 
-            {/* Fire Apparatus - Engine 12 */}
+            {/* Fire Apparatus - Engine 78 (positioned on W Marquette Rd) */}
             <div className={cn(
               "absolute -bottom-24 left-1/2 -translate-x-1/2 w-20 h-8 border rounded-sm",
               displayMode === "night-vision" ? "bg-green-700/80 border-green-500 shadow-[0_0_15px_rgba(0,200,0,0.4)]" : "bg-fire/80 border-fire glow-fire"
@@ -840,7 +938,7 @@ export function TacticalViewport() {
               <span className={cn(
                 "absolute -top-4 left-1/2 -translate-x-1/2 text-[7px] font-bold whitespace-nowrap",
                 displayMode === "night-vision" ? "text-green-400" : "text-fire"
-              )}>ENGINE 12</span>
+              )}>ENGINE 78</span>
               <div className={cn(
                 "absolute top-1 left-1 w-3 h-2 rounded-sm",
                 displayMode === "night-vision" ? "bg-green-500/60" : "bg-fire-glow/60"
@@ -851,7 +949,7 @@ export function TacticalViewport() {
               )} />
             </div>
 
-            {/* Truck 5 */}
+            {/* Truck 23 (positioned near S California Ave) */}
             <div className={cn(
               "absolute -bottom-36 left-1/4 w-24 h-7 border rounded-sm",
               displayMode === "night-vision" ? "bg-green-700/80 border-green-500 shadow-[0_0_15px_rgba(0,200,0,0.4)]" : "bg-fire/80 border-fire glow-fire"
@@ -859,7 +957,7 @@ export function TacticalViewport() {
               <span className={cn(
                 "absolute -top-4 left-1/2 -translate-x-1/2 text-[7px] font-bold whitespace-nowrap",
                 displayMode === "night-vision" ? "text-green-400" : "text-fire"
-              )}>TRUCK 5</span>
+              )}>TRUCK 23</span>
               <div className={cn(
                 "absolute top-1/2 -translate-y-1/2 left-2 w-16 h-1",
                 displayMode === "night-vision" ? "bg-green-500/40" : "bg-fire-glow/40"
@@ -887,7 +985,7 @@ export function TacticalViewport() {
               />
             </svg>
 
-            {/* Hydrant */}
+            {/* Hydrant - S Fairfield Ave (between California and Mozart) */}
             <div className={cn(
               "absolute -bottom-40 right-1/4 w-4 h-6 rounded-t border-2",
               displayMode === "night-vision" ? "bg-green-700 border-green-500" : "bg-water border-water-glow"
@@ -897,9 +995,9 @@ export function TacticalViewport() {
                 displayMode === "night-vision" ? "bg-green-600" : "bg-water"
               )} />
               <span className={cn(
-                "absolute -bottom-3 left-1/2 -translate-x-1/2 text-[6px] font-bold whitespace-nowrap",
+                "absolute -bottom-4 left-1/2 -translate-x-1/2 text-[6px] font-bold whitespace-nowrap",
                 displayMode === "night-vision" ? "text-green-400" : "text-water"
-              )}>H</span>
+              )}>HYD</span>
             </div>
 
             {/* Firefighter Team Markers */}

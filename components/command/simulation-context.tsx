@@ -7,6 +7,60 @@ export type MapSource = "tactical" | "satellite" | "google-maps" | "google-earth
 export type TimelineEventId = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8
 export type DisplayMode = "dark" | "light" | "night-vision"
 
+// Fixed cross street anchor configuration for 2824 W Marquette Rd, Chicago, IL 60629
+// These anchors lock the map orientation to real-world coordinates
+export interface CrossStreetAnchor {
+  name: string
+  direction: "north" | "south" | "east" | "west"
+  bearing: number // Degrees from true north (0 = N, 90 = E, 180 = S, 270 = W)
+}
+
+export interface IncidentLocation {
+  address: string
+  city: string
+  state: string
+  zip: string
+  latitude: number
+  longitude: number
+  // Cross streets define the fixed anchor points for map orientation
+  crossStreets: {
+    primary: CrossStreetAnchor // The street the address is on (E-W running)
+    secondary: CrossStreetAnchor // The nearest cross street (N-S running)
+    tertiary?: CrossStreetAnchor // Optional: next cross street for block reference
+  }
+  // True north bearing offset for this location (Chicago grid is ~1.5° off true north)
+  gridBearingOffset: number
+}
+
+// Fixed incident location data - cross streets are ANCHOR POINTS that never move
+export const incidentLocation: IncidentLocation = {
+  address: "2824 W Marquette Rd",
+  city: "Chicago",
+  state: "IL",
+  zip: "60629",
+  latitude: 41.7725,
+  longitude: -87.6923,
+  crossStreets: {
+    primary: {
+      name: "W Marquette Rd",
+      direction: "east", // Street runs east-west, Alpha side faces east
+      bearing: 90, // True east
+    },
+    secondary: {
+      name: "S California Ave",
+      direction: "north", // Street runs north-south, to the west of address
+      bearing: 0, // True north
+    },
+    tertiary: {
+      name: "S Mozart St",
+      direction: "north", // Street runs north-south, to the east of address
+      bearing: 0, // True north
+    },
+  },
+  // Chicago street grid is approximately 1.5 degrees clockwise from true north
+  gridBearingOffset: 1.5,
+}
+
 export interface TimelineEvent {
   id: TimelineEventId
   time: string
