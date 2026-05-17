@@ -26,11 +26,11 @@ const unitsOnScene = {
 }
 
 const actions = [
+  { icon: Mic, label: "Voice Note", variant: "success" as const, action: "voiceNote" },
   { icon: Plus, label: "Add Unit", variant: "default" as const, action: "addUnit" },
   { icon: AlertTriangle, label: "Add Hazard", variant: "destructive" as const, action: "addHazard" },
   { icon: Camera, label: "Snapshot", variant: "secondary" as const, action: "snapshot" },
   { icon: Users, label: "PAR Check", variant: "default" as const, action: "parCheck" },
-  { icon: Mic, label: "Voice Note", variant: "secondary" as const, action: "voiceNote" },
   { icon: RotateCcw, label: "Replay", variant: "secondary" as const, action: "replay" },
   { icon: Download, label: "Export", variant: "secondary" as const, action: "export" },
 ]
@@ -47,6 +47,7 @@ export function CommandActions() {
           containerBg: "bg-white/95 border-slate-300",
           textColor: "text-slate-600",
           defaultBtn: "bg-cyan-600 hover:bg-cyan-700 text-white",
+          successBtn: "bg-emerald-600 hover:bg-emerald-700 text-white",
           secondaryBtn: "bg-slate-100 hover:bg-slate-200 text-slate-700 border-slate-300",
           destructiveBtn: "bg-red-100 hover:bg-red-200 text-red-700 border-red-300",
           modalBg: "bg-white border-slate-300",
@@ -64,6 +65,7 @@ export function CommandActions() {
           containerBg: "bg-black/95 border-green-900",
           textColor: "text-green-600",
           defaultBtn: "bg-green-800 hover:bg-green-700 text-green-200",
+          successBtn: "bg-green-700 hover:bg-green-600 text-green-100",
           secondaryBtn: "bg-green-950 hover:bg-green-900/80 text-green-400 border-green-800",
           destructiveBtn: "bg-green-900/50 hover:bg-green-800/50 text-green-300 border-green-700",
           modalBg: "bg-black border-green-800",
@@ -81,6 +83,7 @@ export function CommandActions() {
           containerBg: "bg-card/90 border-border",
           textColor: "text-muted-foreground",
           defaultBtn: "",
+          successBtn: "bg-safe hover:bg-safe/90 text-background",
           secondaryBtn: "",
           destructiveBtn: "bg-fire/20 hover:bg-fire/30 text-fire border-fire/30",
           modalBg: "bg-card border-border",
@@ -98,12 +101,14 @@ export function CommandActions() {
 
   const styles = getDisplayModeStyles()
 
-  const getButtonStyle = (variant: "default" | "secondary" | "destructive") => {
+  const getButtonStyle = (variant: "default" | "secondary" | "destructive" | "success") => {
     if (displayMode === "dark") {
       if (variant === "destructive") return styles.destructiveBtn
+      if (variant === "success") return styles.successBtn
       return ""
     }
     if (variant === "default") return styles.defaultBtn
+    if (variant === "success") return styles.successBtn
     if (variant === "secondary") return styles.secondaryBtn
     if (variant === "destructive") return styles.destructiveBtn
     return ""
