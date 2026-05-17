@@ -176,7 +176,7 @@
   pointer-events: none;
 }
 
-/* Map Source Backgrounds */
+/* Map Source Backgrounds - 2824 W Marquette Rd, Chicago, IL 60629 */
 
 /* Tactical Grid - Dark command center with cyan grid lines */
 .tactical-bg {
@@ -186,64 +186,72 @@
     repeating-linear-gradient(90deg, transparent 0px, transparent 39px, oklch(0.3 0.1 200 / 0.08) 39px, oklch(0.3 0.1 200 / 0.08) 40px);
 }
 
-/* Satellite View - Realistic dark terrain with vegetation patches */
+/* Satellite View - Chicago residential neighborhood aerial view */
 .satellite-bg {
   background: 
-    /* Building shadows and structures */
-    radial-gradient(ellipse 80px 60px at 30% 40%, oklch(0.12 0.02 100 / 0.4) 0%, transparent 70%),
-    radial-gradient(ellipse 60px 50px at 70% 35%, oklch(0.12 0.02 100 / 0.3) 0%, transparent 70%),
-    radial-gradient(ellipse 50px 40px at 55% 65%, oklch(0.12 0.02 100 / 0.35) 0%, transparent 70%),
-    /* Vegetation / trees */
-    radial-gradient(circle 15px at 15% 20%, oklch(0.2 0.08 140 / 0.5) 0%, transparent 100%),
-    radial-gradient(circle 12px at 18% 25%, oklch(0.18 0.07 135 / 0.4) 0%, transparent 100%),
-    radial-gradient(circle 18px at 80% 70%, oklch(0.2 0.08 140 / 0.5) 0%, transparent 100%),
-    radial-gradient(circle 14px at 85% 60%, oklch(0.18 0.07 135 / 0.4) 0%, transparent 100%),
-    radial-gradient(circle 10px at 10% 80%, oklch(0.19 0.07 138 / 0.4) 0%, transparent 100%),
-    /* Roads */
-    linear-gradient(90deg, transparent 45%, oklch(0.25 0.01 250 / 0.4) 48%, oklch(0.25 0.01 250 / 0.4) 52%, transparent 55%),
-    linear-gradient(0deg, transparent 45%, oklch(0.25 0.01 250 / 0.4) 48%, oklch(0.25 0.01 250 / 0.4) 52%, transparent 55%),
-    /* Base terrain */
-    linear-gradient(180deg, oklch(0.15 0.04 120 / 0.6) 0%, oklch(0.12 0.03 110 / 0.7) 100%),
-    oklch(0.1 0.02 100);
+    /* Red/brown brick rooftops - typical Chicago hip roofs */
+    radial-gradient(ellipse 45px 35px at 20% 25%, oklch(0.25 0.08 25 / 0.7) 0%, transparent 100%),
+    radial-gradient(ellipse 50px 40px at 50% 30%, oklch(0.28 0.1 30 / 0.8) 0%, transparent 100%),
+    radial-gradient(ellipse 45px 35px at 80% 28%, oklch(0.26 0.08 25 / 0.7) 0%, transparent 100%),
+    radial-gradient(ellipse 48px 38px at 20% 70%, oklch(0.27 0.09 28 / 0.7) 0%, transparent 100%),
+    radial-gradient(ellipse 52px 42px at 50% 68%, oklch(0.29 0.1 30 / 0.8) 0%, transparent 100%),
+    radial-gradient(ellipse 45px 35px at 78% 72%, oklch(0.25 0.08 25 / 0.7) 0%, transparent 100%),
+    /* Mature trees along streets - Chicago parkway trees */
+    radial-gradient(circle 18px at 10% 30%, oklch(0.22 0.12 140 / 0.7) 0%, oklch(0.18 0.1 135 / 0.3) 70%, transparent 100%),
+    radial-gradient(circle 15px at 12% 70%, oklch(0.2 0.11 138 / 0.6) 0%, oklch(0.16 0.09 133 / 0.3) 70%, transparent 100%),
+    radial-gradient(circle 20px at 35% 25%, oklch(0.24 0.13 142 / 0.7) 0%, oklch(0.2 0.11 137 / 0.3) 70%, transparent 100%),
+    radial-gradient(circle 16px at 65% 28%, oklch(0.21 0.11 139 / 0.6) 0%, oklch(0.17 0.09 134 / 0.3) 70%, transparent 100%),
+    radial-gradient(circle 18px at 88% 32%, oklch(0.23 0.12 141 / 0.7) 0%, oklch(0.19 0.1 136 / 0.3) 70%, transparent 100%),
+    radial-gradient(circle 17px at 36% 72%, oklch(0.22 0.12 140 / 0.6) 0%, oklch(0.18 0.1 135 / 0.3) 70%, transparent 100%),
+    radial-gradient(circle 19px at 64% 70%, oklch(0.24 0.13 142 / 0.7) 0%, oklch(0.2 0.11 137 / 0.3) 70%, transparent 100%),
+    radial-gradient(circle 15px at 90% 68%, oklch(0.2 0.1 138 / 0.5) 0%, oklch(0.16 0.08 133 / 0.3) 70%, transparent 100%),
+    /* W Marquette Rd - main horizontal street */
+    linear-gradient(90deg, oklch(0.22 0.01 250 / 0.8) 0%, oklch(0.22 0.01 250 / 0.8) 100%),
+    linear-gradient(0deg, transparent 46%, oklch(0.22 0.01 250 / 0.7) 48%, oklch(0.22 0.01 250 / 0.7) 52%, transparent 54%),
+    /* Green grass lawns between buildings */
+    linear-gradient(180deg, oklch(0.18 0.06 130 / 0.5) 0%, oklch(0.15 0.05 125 / 0.6) 100%),
+    oklch(0.12 0.04 120);
 }
 
-/* Street Map View - Light colored map with roads and blocks */
+/* Street Map View - Chicago grid street layout */
 .streets-bg {
   background: 
-    /* Major road horizontal */
-    linear-gradient(90deg, transparent 42%, oklch(0.95 0.01 90) 45%, oklch(0.95 0.01 90) 55%, transparent 58%),
-    /* Major road vertical */
-    linear-gradient(0deg, transparent 42%, oklch(0.95 0.01 90) 45%, oklch(0.95 0.01 90) 55%, transparent 58%),
-    /* Road outlines */
-    linear-gradient(90deg, transparent 41%, oklch(0.75 0.02 250 / 0.3) 42%, transparent 43%, transparent 57%, oklch(0.75 0.02 250 / 0.3) 58%, transparent 59%),
-    linear-gradient(0deg, transparent 41%, oklch(0.75 0.02 250 / 0.3) 42%, transparent 43%, transparent 57%, oklch(0.75 0.02 250 / 0.3) 58%, transparent 59%),
-    /* Building blocks */
-    radial-gradient(ellipse 100px 80px at 25% 30%, oklch(0.88 0.015 100 / 0.8) 0%, oklch(0.85 0.01 100 / 0.6) 100%),
-    radial-gradient(ellipse 80px 100px at 75% 30%, oklch(0.86 0.015 100 / 0.8) 0%, oklch(0.83 0.01 100 / 0.6) 100%),
-    radial-gradient(ellipse 90px 70px at 25% 70%, oklch(0.87 0.015 100 / 0.8) 0%, oklch(0.84 0.01 100 / 0.6) 100%),
-    radial-gradient(ellipse 85px 90px at 75% 70%, oklch(0.86 0.015 100 / 0.8) 0%, oklch(0.83 0.01 100 / 0.6) 100%),
-    /* Parks/green spaces */
-    radial-gradient(circle 30px at 20% 50%, oklch(0.75 0.12 140 / 0.4) 0%, transparent 100%),
-    radial-gradient(circle 25px at 80% 50%, oklch(0.75 0.12 140 / 0.4) 0%, transparent 100%),
-    /* Base */
-    oklch(0.92 0.01 100);
+    /* W Marquette Rd - main E-W street (wider) */
+    linear-gradient(0deg, transparent 44%, oklch(0.98 0.01 90) 47%, oklch(0.98 0.01 90) 53%, transparent 56%),
+    /* S California Ave / S Fairfield Ave - N-S streets */
+    linear-gradient(90deg, transparent 20%, oklch(0.96 0.01 90) 22%, oklch(0.96 0.01 90) 26%, transparent 28%),
+    linear-gradient(90deg, transparent 72%, oklch(0.96 0.01 90) 74%, oklch(0.96 0.01 90) 78%, transparent 80%),
+    /* Street labels background */
+    linear-gradient(0deg, transparent 43%, oklch(0.7 0.03 250 / 0.15) 44%, transparent 45%, transparent 55%, oklch(0.7 0.03 250 / 0.15) 56%, transparent 57%),
+    /* Building footprints - Chicago 2-flats in blocks */
+    radial-gradient(ellipse 60px 45px at 15% 25%, oklch(0.92 0.02 30 / 0.5) 0%, oklch(0.88 0.015 30 / 0.4) 100%),
+    radial-gradient(ellipse 65px 50px at 50% 25%, oklch(0.9 0.025 35 / 0.6) 0%, oklch(0.86 0.02 35 / 0.5) 100%),
+    radial-gradient(ellipse 60px 45px at 85% 25%, oklch(0.91 0.02 30 / 0.5) 0%, oklch(0.87 0.015 30 / 0.4) 100%),
+    radial-gradient(ellipse 62px 48px at 15% 75%, oklch(0.91 0.02 32 / 0.5) 0%, oklch(0.87 0.015 32 / 0.4) 100%),
+    radial-gradient(ellipse 68px 52px at 50% 75%, oklch(0.89 0.025 35 / 0.6) 0%, oklch(0.85 0.02 35 / 0.5) 100%),
+    radial-gradient(ellipse 60px 45px at 85% 75%, oklch(0.92 0.02 30 / 0.5) 0%, oklch(0.88 0.015 30 / 0.4) 100%),
+    /* Parks - Marquette Park nearby */
+    radial-gradient(circle 35px at 5% 50%, oklch(0.78 0.15 140 / 0.4) 0%, transparent 100%),
+    /* Base - light gray map background */
+    oklch(0.94 0.008 100);
 }
 
-/* Overview Map - Dark blue terrain/topographic style */
+/* Overview Map - Dark blue terrain/topographic Chicago area */
 .overview-bg {
   background: 
-    /* Topographic contours */
-    radial-gradient(ellipse 200px 150px at 50% 50%, oklch(0.15 0.06 230 / 0.3) 0%, transparent 100%),
-    radial-gradient(ellipse 300px 200px at 50% 50%, oklch(0.12 0.05 230 / 0.2) 0%, transparent 100%),
-    /* Water feature */
-    radial-gradient(ellipse 60px 30px at 85% 85%, oklch(0.25 0.1 230 / 0.5) 0%, transparent 100%),
-    /* Roads */
-    linear-gradient(90deg, transparent 46%, oklch(0.35 0.04 250 / 0.5) 48%, oklch(0.35 0.04 250 / 0.5) 52%, transparent 54%),
-    linear-gradient(0deg, transparent 46%, oklch(0.35 0.04 250 / 0.5) 48%, oklch(0.35 0.04 250 / 0.5) 52%, transparent 54%),
-    /* Terrain variation */
-    linear-gradient(135deg, oklch(0.08 0.04 240) 0%, oklch(0.06 0.05 250) 50%, oklch(0.08 0.04 240) 100%),
-    /* Grid overlay */
-    repeating-linear-gradient(0deg, transparent 0px, transparent 79px, oklch(0.3 0.08 230 / 0.1) 79px, oklch(0.3 0.08 230 / 0.1) 80px),
-    repeating-linear-gradient(90deg, transparent 0px, transparent 79px, oklch(0.3 0.08 230 / 0.1) 79px, oklch(0.3 0.08 230 / 0.1) 80px),
-    oklch(0.05 0.04 250);
+    /* Chicago grid pattern */
+    repeating-linear-gradient(0deg, transparent 0px, transparent 59px, oklch(0.25 0.06 230 / 0.2) 59px, oklch(0.25 0.06 230 / 0.2) 60px),
+    repeating-linear-gradient(90deg, transparent 0px, transparent 59px, oklch(0.25 0.06 230 / 0.2) 59px, oklch(0.25 0.06 230 / 0.2) 60px),
+    /* Building density heat */
+    radial-gradient(ellipse 250px 180px at 50% 50%, oklch(0.18 0.08 230 / 0.4) 0%, transparent 100%),
+    /* Major streets glow */
+    linear-gradient(0deg, transparent 46%, oklch(0.35 0.08 40 / 0.4) 48%, oklch(0.35 0.08 40 / 0.4) 52%, transparent 54%),
+    linear-gradient(90deg, transparent 22%, oklch(0.3 0.06 40 / 0.3) 24%, oklch(0.3 0.06 40 / 0.3) 26%, transparent 28%),
+    /* Marquette Park green area */
+    radial-gradient(ellipse 80px 60px at 10% 45%, oklch(0.18 0.1 145 / 0.4) 0%, transparent 100%),
+    /* Lake Michigan direction indicator (east) */
+    linear-gradient(90deg, transparent 92%, oklch(0.2 0.12 230 / 0.3) 95%, oklch(0.25 0.15 230 / 0.4) 100%),
+    /* Terrain base */
+    linear-gradient(135deg, oklch(0.07 0.04 240) 0%, oklch(0.05 0.05 250) 50%, oklch(0.07 0.04 240) 100%),
+    oklch(0.04 0.04 250);
 }

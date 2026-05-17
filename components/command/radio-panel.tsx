@@ -13,15 +13,15 @@ interface RadioMessage {
 }
 
 const radioMessages: RadioMessage[] = [
-  { id: "1", timestamp: "14:32", unit: "Command", message: "RIT established, Truck 9 standing by", type: "command" },
-  { id: "2", timestamp: "14:28", unit: "Engine 12", message: "Water on the fire, knockdown in progress", type: "engine" },
-  { id: "3", timestamp: "14:24", unit: "Truck 5", message: "Primary search all clear, second floor", type: "search" },
-  { id: "4", timestamp: "14:20", unit: "Truck 5", message: "Opening roof for ventilation", type: "truck" },
-  { id: "5", timestamp: "14:16", unit: "Engine 8", message: "Heavy smoke pushing from second floor windows", type: "hazard" },
-  { id: "6", timestamp: "14:12", unit: "Engine 12", message: "Stretching 2½ inch line to Alpha side", type: "engine" },
-  { id: "7", timestamp: "14:08", unit: "Battalion 3", message: "Establishing command, Alpha-Delta corner", type: "command" },
-  { id: "8", timestamp: "14:04", unit: "Engine 12", message: "On scene, two-story ordinary, smoke showing", type: "engine" },
-  { id: "9", timestamp: "14:00", unit: "Dispatch", message: "Structure fire, 1234 S Halsted, multiple calls", type: "command" },
+  { id: "1", timestamp: "14:32", unit: "Command", message: "RIT established, Truck 9 standing by Marquette and Fairfield", type: "command" },
+  { id: "2", timestamp: "14:28", unit: "Engine 78", message: "Water on the fire, knockdown in progress second floor", type: "engine" },
+  { id: "3", timestamp: "14:24", unit: "Truck 23", message: "Primary search all clear, 2nd floor 2824 W Marquette", type: "search" },
+  { id: "4", timestamp: "14:20", unit: "Truck 23", message: "Opening hip roof for vertical ventilation", type: "truck" },
+  { id: "5", timestamp: "14:16", unit: "Engine 78", message: "Heavy smoke pushing from 2nd floor front windows, brick two-flat", type: "hazard" },
+  { id: "6", timestamp: "14:12", unit: "Engine 78", message: "Stretching 1¾ inch line through front door Alpha side", type: "engine" },
+  { id: "7", timestamp: "14:08", unit: "Battalion 18", message: "Establishing Marquette Command, Alpha-Bravo corner", type: "command" },
+  { id: "8", timestamp: "14:04", unit: "Engine 78", message: "On scene 2824 W Marquette, 2-story brick ordinary, smoke from 2nd floor", type: "engine" },
+  { id: "9", timestamp: "14:00", unit: "Dispatch", message: "Structure fire, 2824 W Marquette, Chicago Lawn, caller reports fire 2nd floor", type: "command" },
 ]
 
 const getIcon = (type: RadioMessage["type"]) => {

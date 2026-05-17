@@ -107,7 +107,7 @@ export function HeaderBar() {
         {/* Address */}
         <div className="flex items-center gap-2 text-sm">
           <MapPin className={cn("w-4 h-4", styles.mutedText)} />
-          <span className={cn("font-medium", styles.textColor)}>1234 S Halsted St, Chicago, IL</span>
+          <span className={cn("font-medium", styles.textColor)}>2824 W Marquette Rd, Chicago, IL 60629</span>
         </div>
 
         {/* Timer */}

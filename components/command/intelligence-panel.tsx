@@ -16,24 +16,24 @@ const sectorLabels: Record<SectorView, string> = {
 }
 
 const mapSourceLabels = {
-  tactical: "Tactical View",
-  satellite: "Mock Satellite",
-  "google-maps": "Mock Google Maps",
-  "google-earth": "Mock Google Earth",
+  tactical: "Tactical Grid",
+  satellite: "Satellite View",
+  "google-maps": "Street Map",
+  "google-earth": "Overview Map",
 }
 
 export function IntelligencePanel() {
   const { selectedSector, mapSource, currentEvent, selectedEventId, displayMode, isFreeRotate } = useSimulation()
 
   const structureData = [
-    { label: "Building Type", value: "Ordinary Construction" },
-    { label: "Occupancy", value: "Multi-Family Residential" },
-    { label: "Dimensions", value: "30' × 75'" },
-    { label: "Floors", value: "2 Stories" },
-    { label: "Roof Type", value: "Flat / Built-up" },
-    { label: "Fire Location", value: "2nd Floor Charlie Side" },
-    { label: "Exposure Risk", value: "Bravo Side" },
-    { label: "Water Supply", value: "Hydrant Secured" },
+    { label: "Building Type", value: "Brick Ordinary" },
+    { label: "Occupancy", value: "Mixed Use (Commercial/Residential)" },
+    { label: "Dimensions", value: "25' × 50'" },
+    { label: "Floors", value: "2 Stories + Basement" },
+    { label: "Roof Type", value: "Hip Roof - Asphalt Shingle" },
+    { label: "Fire Location", value: "2nd Floor Alpha Side" },
+    { label: "Exposure Risk", value: "Bravo/Delta Adjacent Units" },
+    { label: "Water Supply", value: "Hydrant - S Fairfield Ave" },
   ]
 
   const getDisplayModeStyles = () => {
