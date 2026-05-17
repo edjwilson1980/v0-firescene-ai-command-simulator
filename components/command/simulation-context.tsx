@@ -68,6 +68,13 @@ export interface TimelineEvent {
   description: string
   fireStatus: "active" | "knocked" | "spreading" | "contained"
   sceneNote: string
+  voiceNote?: string // Base64 encoded audio data
+}
+
+export interface VoiceNote {
+  timestamp: string
+  duration: number // in seconds
+  audioData: string // Base64 encoded audio
 }
 
 export const timelineEvents: TimelineEvent[] = [
@@ -117,6 +124,8 @@ interface SimulationState {
   setIsFreeRotate: (free: boolean) => void
   resetViewport: () => void
   goToSector: (sector: SectorView) => void
+  voiceNotes: VoiceNote[]
+  addVoiceNote: (note: VoiceNote) => void
 }
 
 const SimulationContext = createContext<SimulationState | null>(null)
@@ -129,6 +138,7 @@ export function SimulationProvider({ children }: { children: ReactNode }) {
   const [displayMode, setDisplayMode] = useState<DisplayMode>("dark")
   const [viewportTransform, setViewportTransform] = useState<ViewportTransform>(defaultSectorTransforms.alpha)
   const [isFreeRotate, setIsFreeRotate] = useState(false)
+  const [voiceNotes, setVoiceNotes] = useState<VoiceNote[]>([])
 
   const currentEvent = timelineEvents.find(e => e.id === selectedEventId) || timelineEvents[0]
 
@@ -142,6 +152,10 @@ export function SimulationProvider({ children }: { children: ReactNode }) {
     setSelectedSector(sector)
     setViewportTransform(defaultSectorTransforms[sector])
     setIsFreeRotate(false)
+  }
+
+  const addVoiceNote = (note: VoiceNote) => {
+    setVoiceNotes([...voiceNotes, note])
   }
 
   return (
@@ -163,6 +177,8 @@ export function SimulationProvider({ children }: { children: ReactNode }) {
       setIsFreeRotate,
       resetViewport,
       goToSector,
+      voiceNotes,
+      addVoiceNote,
     }}>
       {children}
     </SimulationContext.Provider>
