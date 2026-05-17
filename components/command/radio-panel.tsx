@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { Radio, Truck, Users, Droplets, AlertTriangle, Shield, Search, ChevronLeft, ChevronRight, X } from "lucide-react"
-import { useSimulation } from "./simulation-context"
+import { useSimulation, SectorView } from "./simulation-context"
 import { cn } from "@/lib/utils"
 
 interface RadioMessage {
@@ -27,6 +27,18 @@ const radioMessages: RadioMessage[] = [
   { id: "11", timestamp: "14:10", unit: "Truck 9", message: "Truck 9 on scene, RIT assignment", type: "truck" },
   { id: "12", timestamp: "14:14", unit: "Engine 84", message: "Engine 84 on scene, water supply", type: "engine" },
 ]
+
+const sectorLabels: Record<SectorView, string> = {
+  "alpha": "Alpha Side",
+  "bravo": "Bravo Side",
+  "charlie": "Charlie Side",
+  "delta": "Delta Side",
+  "roof": "Roof View",
+  "overhead": "Overhead View",
+  "interior": "Interior Slice",
+}
+
+const sectors: SectorView[] = ["alpha", "bravo", "charlie", "delta", "roof", "overhead", "interior"]
 
 const getIcon = (type: RadioMessage["type"]) => {
   switch (type) {
@@ -75,7 +87,7 @@ interface RadioPanelProps {
 }
 
 export function RadioPanel({ isCollapsed, onToggleCollapse, isClosed, onClose, onOpen }: RadioPanelProps) {
-  const { displayMode } = useSimulation()
+  const { displayMode, selectedSector, goToSector, isFreeRotate, resetViewport } = useSimulation()
 
   const getDisplayModeStyles = () => {
     switch (displayMode) {
@@ -211,6 +223,35 @@ export function RadioPanel({ isCollapsed, onToggleCollapse, isClosed, onClose, o
             </p>
           </div>
         ))}
+      </div>
+
+      {/* Select View Section */}
+      <div className={cn("border-t p-2", styles.headerBg)}>
+        <div className={cn("text-[9px] uppercase tracking-wider font-semibold mb-2", styles.mutedText)}>Select View</div>
+        <div className="flex flex-col gap-1">
+          {sectors.map((sector) => (
+            <button
+              key={sector}
+              onClick={() => goToSector(sector)}
+              className={cn(
+                "px-2 py-1.5 rounded text-[9px] font-medium transition-all duration-200 text-left",
+                selectedSector === sector && !isFreeRotate
+                  ? "bg-accent text-accent-foreground"
+                  : cn(styles.mutedText, "hover:bg-secondary hover:text-foreground")
+              )}
+            >
+              {sectorLabels[sector]}
+            </button>
+          ))}
+        </div>
+        {isFreeRotate && (
+          <button
+            onClick={resetViewport}
+            className="mt-2 w-full px-2 py-1 rounded text-[8px] font-medium bg-fire/20 text-fire border border-fire/30 hover:bg-fire/30 transition-all"
+          >
+            Reset to Alpha
+          </button>
+        )}
       </div>
 
       {/* Footer */}
