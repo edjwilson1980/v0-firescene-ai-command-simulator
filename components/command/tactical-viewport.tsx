@@ -33,26 +33,30 @@ const mapSourceIcons: Record<MapSource, typeof Map> = {
 const mapSourceLabels: Record<MapSource, string> = {
   tactical: "Tactical",
   satellite: "Satellite",
-  "google-maps": "Maps",
-  "google-earth": "Earth",
+  "google-maps": "Streets",
+  "google-earth": "Overview",
 }
 
-const mapSourceStyles: Record<MapSource, { bg: string; grid: string }> = {
+const mapSourceStyles: Record<MapSource, { bg: string; grid: string; label: string }> = {
   tactical: {
-    bg: "bg-background/50",
+    bg: "tactical-bg",
     grid: "rgba(100, 150, 200, 0.1)",
+    label: "Tactical Grid",
   },
   satellite: {
-    bg: "bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900",
-    grid: "rgba(50, 80, 50, 0.15)",
+    bg: "satellite-bg",
+    grid: "rgba(50, 80, 50, 0.08)",
+    label: "Satellite View",
   },
   "google-maps": {
-    bg: "bg-gradient-to-br from-slate-800 via-slate-700 to-slate-800",
-    grid: "rgba(200, 200, 200, 0.08)",
+    bg: "streets-bg",
+    grid: "rgba(180, 180, 180, 0.12)",
+    label: "Street Map",
   },
   "google-earth": {
-    bg: "bg-gradient-to-br from-slate-950 via-blue-950 to-slate-950",
-    grid: "rgba(80, 120, 200, 0.1)",
+    bg: "overview-bg",
+    grid: "rgba(80, 120, 200, 0.08)",
+    label: "Overview Map",
   },
 }
 
@@ -191,6 +195,7 @@ export function TacticalViewport() {
           panelBg: "bg-white/90 border-slate-300",
           textColor: "text-slate-900",
           mutedText: "text-slate-600",
+          useMapBg: false,
         }
       case "night-vision":
         return {
@@ -199,6 +204,7 @@ export function TacticalViewport() {
           panelBg: "bg-black/90 border-green-900/50",
           textColor: "text-green-400",
           mutedText: "text-green-600",
+          useMapBg: false,
         }
       default:
         return {
@@ -207,6 +213,7 @@ export function TacticalViewport() {
           panelBg: "bg-card/90 border-border",
           textColor: "text-foreground",
           mutedText: "text-muted-foreground",
+          useMapBg: true,
         }
     }
   }
@@ -281,7 +288,7 @@ export function TacticalViewport() {
         ref={containerRef}
         className={cn(
           "flex-1 relative overflow-hidden scanlines transition-all duration-300 select-none",
-          styles.containerBg,
+          !styles.useMapBg && styles.containerBg,
           panMode ? "cursor-move" : "cursor-grab",
           (isDragging || isPanning) && "cursor-grabbing"
         )}
@@ -294,6 +301,10 @@ export function TacticalViewport() {
         onTouchEnd={onTouchEnd}
         onWheel={onWheel}
       >
+        {/* Map Source Background Layer */}
+        {styles.useMapBg && (
+          <div className={cn("absolute inset-0 transition-all duration-500", currentMapStyle.bg)} />
+        )}
         {/* Night Vision Overlay */}
         {displayMode === "night-vision" && (
           <div className="absolute inset-0 bg-green-950/20 pointer-events-none z-30 mix-blend-overlay" />
@@ -312,27 +323,32 @@ export function TacticalViewport() {
         />
 
         {/* Map Source Toggle - Top Left */}
-        <div className={cn("absolute top-4 left-4 flex gap-1 p-1 rounded-lg z-20", styles.panelBg)}>
-          {mapSources.map((source) => {
-            const Icon = mapSourceIcons[source]
-            return (
-              <button
-                key={source}
-                onClick={(e) => { e.stopPropagation(); setMapSource(source); }}
-                className={cn(
-                  "flex items-center gap-1.5 px-2 py-1.5 rounded text-[10px] font-medium transition-all duration-200",
-                  mapSource === source
-                    ? displayMode === "night-vision" 
-                      ? "bg-green-900/50 text-green-300" 
-                      : "bg-accent text-accent-foreground"
-                    : cn(styles.mutedText, "hover:bg-secondary hover:text-foreground")
-                )}
-              >
-                <Icon className="w-3 h-3" />
-                {mapSourceLabels[source]}
-              </button>
-            )
-          })}
+        <div className="absolute top-4 left-4 z-20" onClick={(e) => e.stopPropagation()}>
+          <div className={cn("p-2 rounded-lg border", styles.panelBg)}>
+            <div className={cn("text-[9px] uppercase tracking-wider mb-2", styles.mutedText)}>Map Source</div>
+            <div className="flex gap-1">
+              {mapSources.map((source) => {
+                const Icon = mapSourceIcons[source]
+                return (
+                  <button
+                    key={source}
+                    onClick={(e) => { e.stopPropagation(); setMapSource(source); }}
+                    className={cn(
+                      "flex flex-col items-center gap-1 px-2.5 py-2 rounded text-[9px] font-medium transition-all duration-200 min-w-[52px]",
+                      mapSource === source
+                        ? displayMode === "night-vision" 
+                          ? "bg-green-900/50 text-green-300 ring-1 ring-green-500/50" 
+                          : "bg-accent text-accent-foreground ring-1 ring-accent/50"
+                        : cn(styles.mutedText, "hover:bg-secondary hover:text-foreground")
+                    )}
+                  >
+                    <Icon className="w-4 h-4" />
+                    {mapSourceLabels[source]}
+                  </button>
+                )
+              })}
+            </div>
+          </div>
         </div>
 
         {/* Compass - Top Right */}

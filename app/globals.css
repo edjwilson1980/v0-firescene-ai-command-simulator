@@ -175,3 +175,75 @@
   );
   pointer-events: none;
 }
+
+/* Map Source Backgrounds */
+
+/* Tactical Grid - Dark command center with cyan grid lines */
+.tactical-bg {
+  background: 
+    linear-gradient(135deg, oklch(0.08 0.02 250) 0%, oklch(0.06 0.015 250) 50%, oklch(0.08 0.02 250) 100%),
+    repeating-linear-gradient(0deg, transparent 0px, transparent 39px, oklch(0.3 0.1 200 / 0.08) 39px, oklch(0.3 0.1 200 / 0.08) 40px),
+    repeating-linear-gradient(90deg, transparent 0px, transparent 39px, oklch(0.3 0.1 200 / 0.08) 39px, oklch(0.3 0.1 200 / 0.08) 40px);
+}
+
+/* Satellite View - Realistic dark terrain with vegetation patches */
+.satellite-bg {
+  background: 
+    /* Building shadows and structures */
+    radial-gradient(ellipse 80px 60px at 30% 40%, oklch(0.12 0.02 100 / 0.4) 0%, transparent 70%),
+    radial-gradient(ellipse 60px 50px at 70% 35%, oklch(0.12 0.02 100 / 0.3) 0%, transparent 70%),
+    radial-gradient(ellipse 50px 40px at 55% 65%, oklch(0.12 0.02 100 / 0.35) 0%, transparent 70%),
+    /* Vegetation / trees */
+    radial-gradient(circle 15px at 15% 20%, oklch(0.2 0.08 140 / 0.5) 0%, transparent 100%),
+    radial-gradient(circle 12px at 18% 25%, oklch(0.18 0.07 135 / 0.4) 0%, transparent 100%),
+    radial-gradient(circle 18px at 80% 70%, oklch(0.2 0.08 140 / 0.5) 0%, transparent 100%),
+    radial-gradient(circle 14px at 85% 60%, oklch(0.18 0.07 135 / 0.4) 0%, transparent 100%),
+    radial-gradient(circle 10px at 10% 80%, oklch(0.19 0.07 138 / 0.4) 0%, transparent 100%),
+    /* Roads */
+    linear-gradient(90deg, transparent 45%, oklch(0.25 0.01 250 / 0.4) 48%, oklch(0.25 0.01 250 / 0.4) 52%, transparent 55%),
+    linear-gradient(0deg, transparent 45%, oklch(0.25 0.01 250 / 0.4) 48%, oklch(0.25 0.01 250 / 0.4) 52%, transparent 55%),
+    /* Base terrain */
+    linear-gradient(180deg, oklch(0.15 0.04 120 / 0.6) 0%, oklch(0.12 0.03 110 / 0.7) 100%),
+    oklch(0.1 0.02 100);
+}
+
+/* Street Map View - Light colored map with roads and blocks */
+.streets-bg {
+  background: 
+    /* Major road horizontal */
+    linear-gradient(90deg, transparent 42%, oklch(0.95 0.01 90) 45%, oklch(0.95 0.01 90) 55%, transparent 58%),
+    /* Major road vertical */
+    linear-gradient(0deg, transparent 42%, oklch(0.95 0.01 90) 45%, oklch(0.95 0.01 90) 55%, transparent 58%),
+    /* Road outlines */
+    linear-gradient(90deg, transparent 41%, oklch(0.75 0.02 250 / 0.3) 42%, transparent 43%, transparent 57%, oklch(0.75 0.02 250 / 0.3) 58%, transparent 59%),
+    linear-gradient(0deg, transparent 41%, oklch(0.75 0.02 250 / 0.3) 42%, transparent 43%, transparent 57%, oklch(0.75 0.02 250 / 0.3) 58%, transparent 59%),
+    /* Building blocks */
+    radial-gradient(ellipse 100px 80px at 25% 30%, oklch(0.88 0.015 100 / 0.8) 0%, oklch(0.85 0.01 100 / 0.6) 100%),
+    radial-gradient(ellipse 80px 100px at 75% 30%, oklch(0.86 0.015 100 / 0.8) 0%, oklch(0.83 0.01 100 / 0.6) 100%),
+    radial-gradient(ellipse 90px 70px at 25% 70%, oklch(0.87 0.015 100 / 0.8) 0%, oklch(0.84 0.01 100 / 0.6) 100%),
+    radial-gradient(ellipse 85px 90px at 75% 70%, oklch(0.86 0.015 100 / 0.8) 0%, oklch(0.83 0.01 100 / 0.6) 100%),
+    /* Parks/green spaces */
+    radial-gradient(circle 30px at 20% 50%, oklch(0.75 0.12 140 / 0.4) 0%, transparent 100%),
+    radial-gradient(circle 25px at 80% 50%, oklch(0.75 0.12 140 / 0.4) 0%, transparent 100%),
+    /* Base */
+    oklch(0.92 0.01 100);
+}
+
+/* Overview Map - Dark blue terrain/topographic style */
+.overview-bg {
+  background: 
+    /* Topographic contours */
+    radial-gradient(ellipse 200px 150px at 50% 50%, oklch(0.15 0.06 230 / 0.3) 0%, transparent 100%),
+    radial-gradient(ellipse 300px 200px at 50% 50%, oklch(0.12 0.05 230 / 0.2) 0%, transparent 100%),
+    /* Water feature */
+    radial-gradient(ellipse 60px 30px at 85% 85%, oklch(0.25 0.1 230 / 0.5) 0%, transparent 100%),
+    /* Roads */
+    linear-gradient(90deg, transparent 46%, oklch(0.35 0.04 250 / 0.5) 48%, oklch(0.35 0.04 250 / 0.5) 52%, transparent 54%),
+    linear-gradient(0deg, transparent 46%, oklch(0.35 0.04 250 / 0.5) 48%, oklch(0.35 0.04 250 / 0.5) 52%, transparent 54%),
+    /* Terrain variation */
+    linear-gradient(135deg, oklch(0.08 0.04 240) 0%, oklch(0.06 0.05 250) 50%, oklch(0.08 0.04 240) 100%),
+    /* Grid overlay */
+    repeating-linear-gradient(0deg, transparent 0px, transparent 79px, oklch(0.3 0.08 230 / 0.1) 79px, oklch(0.3 0.08 230 / 0.1) 80px),
+    repeating-linear-gradient(90deg, transparent 0px, transparent 79px, oklch(0.3 0.08 230 / 0.1) 79px, oklch(0.3 0.08 230 / 0.1) 80px),
+    oklch(0.05 0.04 250);
+}
