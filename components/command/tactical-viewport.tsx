@@ -372,23 +372,19 @@ export function TacticalViewport() {
           <div className={cn("mt-2 px-3 py-1.5 rounded text-center border", styles.panelBg)}>
             <span className={cn("text-[10px]", styles.mutedText)}>Viewing:</span>
             <span className={cn("text-xs font-medium ml-1", styles.textColor)}>{viewLabel}</span>
-            <div className={cn("text-[8px] mt-1 opacity-70", styles.mutedText)}>
-              Bearing: {incidentLocation.crossStreets.primary.name}
-            </div>
           </div>
         </div>
 
-        {/* Sector Buttons - Left Side (now on left instead of right) */}
-        <div className="absolute top-36 left-4 z-20" onClick={(e) => e.stopPropagation()}>
-          <div className={cn("p-2 rounded-lg border", styles.panelBg)}>
-            <div className={cn("text-[9px] uppercase tracking-wider mb-2", styles.mutedText)}>Select View</div>
-            <div className="flex flex-col gap-1">
+        {/* Sector Buttons - Top Left (compact/skidier styling) */}
+        <div className="absolute top-4 left-4 z-20" onClick={(e) => e.stopPropagation()}>
+          <div className={cn("p-1.5 rounded border", styles.panelBg)}>
+            <div className="flex flex-col gap-0.5">
               {sectors.map((sector) => (
                 <button
                   key={sector}
                   onClick={() => goToSector(sector)}
                   className={cn(
-                    "px-3 py-1.5 rounded text-[10px] font-medium transition-all duration-200 text-left",
+                    "px-2 py-1 rounded text-[9px] font-bold transition-all duration-200 text-left",
                     selectedSector === sector && !isFreeRotate
                       ? "bg-accent text-accent-foreground"
                       : cn(styles.mutedText, "hover:bg-secondary hover:text-foreground")
@@ -401,9 +397,9 @@ export function TacticalViewport() {
             {isFreeRotate && (
               <button
                 onClick={resetViewport}
-                className="mt-2 w-full px-2 py-1 rounded text-[9px] font-medium bg-fire/20 text-fire border border-fire/30 hover:bg-fire/30 transition-all"
+                className="mt-1 w-full px-2 py-0.5 rounded text-[8px] font-medium bg-fire/20 text-fire border border-fire/30 hover:bg-fire/30 transition-all"
               >
-                Reset to Alpha
+                Reset
               </button>
             )}
           </div>
