@@ -84,8 +84,6 @@ export function TacticalViewport() {
   const mapSources: MapSource[] = ["tactical", "satellite", "google-maps", "google-earth"]
   const sectors: SectorView[] = ["alpha", "bravo", "charlie", "delta", "roof", "overhead", "interior"]
 
-  const sectors: SectorView[] = ["alpha", "bravo", "charlie", "delta", "roof", "overhead", "interior"]
-
   // Handle mouse/touch drag for rotation
   const handleDragStart = useCallback((clientX: number, clientY: number) => {
     if (panMode) {
