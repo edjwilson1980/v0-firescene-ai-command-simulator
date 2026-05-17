@@ -1,6 +1,7 @@
 "use client"
 
-import { Radio, Truck, Users, Droplets, AlertTriangle, Shield, Search } from "lucide-react"
+import { useState } from "react"
+import { Radio, Truck, Users, Droplets, AlertTriangle, Shield, Search, ChevronLeft, ChevronRight, X } from "lucide-react"
 import { useSimulation } from "./simulation-context"
 import { cn } from "@/lib/utils"
 
@@ -22,6 +23,9 @@ const radioMessages: RadioMessage[] = [
   { id: "7", timestamp: "14:08", unit: "Battalion 18", message: "Establishing Marquette Command, Alpha-Bravo corner", type: "command" },
   { id: "8", timestamp: "14:04", unit: "Engine 78", message: "On scene 2824 W Marquette, 2-story brick ordinary, smoke from 2nd floor", type: "engine" },
   { id: "9", timestamp: "14:00", unit: "Dispatch", message: "Structure fire, 2824 W Marquette, Chicago Lawn, caller reports fire 2nd floor", type: "command" },
+  { id: "10", timestamp: "14:06", unit: "Ambulance 42", message: "Ambulance 42 on scene, staging Alpha side", type: "ems" },
+  { id: "11", timestamp: "14:10", unit: "Truck 9", message: "Truck 9 on scene, RIT assignment", type: "truck" },
+  { id: "12", timestamp: "14:14", unit: "Engine 84", message: "Engine 84 on scene, water supply", type: "engine" },
 ]
 
 const getIcon = (type: RadioMessage["type"]) => {
@@ -62,7 +66,15 @@ const getTypeColor = (type: RadioMessage["type"], displayMode: string) => {
   }
 }
 
-export function RadioPanel() {
+interface RadioPanelProps {
+  isCollapsed: boolean
+  onToggleCollapse: () => void
+  isClosed: boolean
+  onClose: () => void
+  onOpen: () => void
+}
+
+export function RadioPanel({ isCollapsed, onToggleCollapse, isClosed, onClose, onOpen }: RadioPanelProps) {
   const { displayMode } = useSimulation()
 
   const getDisplayModeStyles = () => {
@@ -77,6 +89,7 @@ export function RadioPanel() {
           activeBg: "bg-white border-purple-300",
           liveColor: "text-red-600",
           liveBg: "bg-red-600",
+          collapsedBg: "bg-white/95 border-slate-300",
         }
       case "night-vision":
         return {
@@ -88,6 +101,7 @@ export function RadioPanel() {
           activeBg: "bg-green-900/50 border-green-600/50",
           liveColor: "text-green-400",
           liveBg: "bg-green-500",
+          collapsedBg: "bg-black/95 border-green-900",
         }
       default:
         return {
@@ -99,15 +113,52 @@ export function RadioPanel() {
           activeBg: "tactical-glass border-radio/40 glow-radio",
           liveColor: "text-live",
           liveBg: "bg-live",
+          collapsedBg: "bg-card/95 border-border",
         }
     }
   }
 
   const styles = getDisplayModeStyles()
 
+  // Closed state - just a small tab to reopen
+  if (isClosed) {
+    return (
+      <button
+        onClick={onOpen}
+        className={cn(
+          "h-full w-10 flex flex-col items-center justify-center gap-2 border-r transition-all hover:w-12",
+          styles.collapsedBg
+        )}
+      >
+        <Radio className={cn("w-4 h-4", displayMode === "night-vision" ? "text-green-500" : displayMode === "light" ? "text-purple-600" : "text-radio")} />
+        <ChevronRight className={cn("w-3 h-3", styles.mutedText)} />
+      </button>
+    )
+  }
+
+  // Collapsed state - slim sidebar
+  if (isCollapsed) {
+    return (
+      <div className={cn(
+        "w-12 flex flex-col items-center py-3 border-r transition-all",
+        styles.collapsedBg
+      )}>
+        <button
+          onClick={onToggleCollapse}
+          className={cn("p-1.5 rounded hover:bg-secondary/50 mb-2", displayMode === "night-vision" && "hover:bg-green-900/50")}
+        >
+          <ChevronRight className={cn("w-4 h-4", styles.mutedText)} />
+        </button>
+        <Radio className={cn("w-4 h-4 mb-2", displayMode === "night-vision" ? "text-green-500" : displayMode === "light" ? "text-purple-600" : "text-radio")} />
+        <div className={cn("w-2 h-2 rounded-full animate-pulse mb-2", styles.liveBg)} />
+        <span className={cn("text-[8px] uppercase tracking-wider", styles.mutedText)} style={{ writingMode: "vertical-rl" }}>Radio</span>
+      </div>
+    )
+  }
+
   return (
     <div className={cn(
-      "w-72 flex flex-col overflow-hidden border",
+      "w-72 flex flex-col overflow-hidden border-r transition-all",
       displayMode === "light" ? styles.containerBg : "",
       displayMode === "night-vision" ? styles.containerBg : "",
       displayMode === "dark" && "tactical-card"
@@ -118,9 +169,23 @@ export function RadioPanel() {
           <Radio className={cn("w-4 h-4", displayMode === "night-vision" ? "text-green-500" : displayMode === "light" ? "text-purple-600" : "text-radio")} />
           <span className={cn("text-sm font-semibold uppercase tracking-wide", styles.textColor)}>Radio Traffic</span>
         </div>
-        <div className="flex items-center gap-1.5">
-          <div className={cn("w-2 h-2 rounded-full animate-pulse", styles.liveBg)} />
-          <span className={cn("text-[10px] uppercase font-medium", styles.liveColor)}>Live</span>
+        <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5">
+            <div className={cn("w-2 h-2 rounded-full animate-pulse", styles.liveBg)} />
+            <span className={cn("text-[10px] uppercase font-medium", styles.liveColor)}>Live</span>
+          </div>
+          <button
+            onClick={onToggleCollapse}
+            className={cn("p-1 rounded hover:bg-secondary/50", displayMode === "night-vision" && "hover:bg-green-900/50")}
+          >
+            <ChevronLeft className={cn("w-4 h-4", styles.mutedText)} />
+          </button>
+          <button
+            onClick={onClose}
+            className={cn("p-1 rounded hover:bg-secondary/50", displayMode === "night-vision" && "hover:bg-green-900/50")}
+          >
+            <X className={cn("w-4 h-4", styles.mutedText)} />
+          </button>
         </div>
       </div>
 
@@ -161,3 +226,6 @@ export function RadioPanel() {
     </div>
   )
 }
+
+// Export the radio messages for PAR check
+export { radioMessages }
