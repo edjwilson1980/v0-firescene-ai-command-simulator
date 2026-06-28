@@ -43,8 +43,8 @@ const mapSourceIcons: Record<MapSource, typeof Map> = {
 const mapSourceLabels: Record<MapSource, string> = {
   tactical: "Tactical",
   satellite: "Satellite",
-  "google-maps": "Streets",
-  "google-earth": "Overview",
+  "google-maps": "Google Maps",
+  "google-earth": "Street View",
 }
 
 function isInteractiveTarget(target: EventTarget | null) {
@@ -65,13 +65,13 @@ const mapSourceStyles: Record<MapSource, { bg: string; grid: string; label: stri
   },
   "google-maps": {
     bg: "streets-bg",
-    grid: "rgba(180, 180, 180, 0.12)",
-    label: "Street Map",
+    grid: "rgba(180, 180, 180, 0.05)",
+    label: "Google Maps",
   },
   "google-earth": {
     bg: "overview-bg",
-    grid: "rgba(80, 120, 200, 0.08)",
-    label: "Overview Map",
+    grid: "rgba(80, 120, 200, 0.05)",
+    label: "Street View",
   },
 }
 
@@ -384,9 +384,12 @@ export function TacticalViewport() {
           <div className={cn("absolute inset-0 pointer-events-none transition-all duration-500", currentMapStyle.bg)} />
         )}
 
-        {/* Grid Background */}
+        {/* Grid Background — hide on real Google Maps imagery */}
         <div 
-          className="absolute inset-0 pointer-events-none opacity-20 transition-all duration-500"
+          className={cn(
+            "absolute inset-0 pointer-events-none transition-all duration-500",
+            mapSource === "tactical" ? "opacity-20" : "opacity-0"
+          )}
           style={{
             backgroundImage: `
               linear-gradient(${styles.gridColor} 1px, transparent 1px),

@@ -19,8 +19,8 @@ const sectorLabels: Record<SectorView, string> = {
 const mapSourceLabels = {
   tactical: "Tactical Grid",
   satellite: "Satellite View",
-  "google-maps": "Street Map",
-  "google-earth": "Overview Map",
+  "google-maps": "Google Maps",
+  "google-earth": "Street View",
 }
 
 type VictimStatus = "DOA" | "REFUSAL" | "TRANSPORTED"
