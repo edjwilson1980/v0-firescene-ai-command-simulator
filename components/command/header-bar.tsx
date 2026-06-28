@@ -107,6 +107,7 @@ export function HeaderBar() {
             return (
               <button
                 key={mode.id}
+                type="button"
                 onClick={() => setDisplayMode(mode.id)}
                 className={cn(
                   "flex items-center gap-1.5 px-2.5 py-1.5 rounded text-[10px] font-medium transition-all duration-200",

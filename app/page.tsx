@@ -17,7 +17,7 @@ export default function FireSceneCommand() {
 
   return (
     <SimulationProvider>
-      <div className="h-screen w-screen flex flex-col overflow-hidden bg-background">
+      <div className="h-screen w-screen flex flex-col overflow-hidden bg-background relative">
         {/* Top Header Bar */}
         <HeaderBar />
 

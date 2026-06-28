@@ -52,10 +52,6 @@ function isInteractiveTarget(target: EventTarget | null) {
   return !!target.closest("button, a, input, select, textarea, [data-no-drag]")
 }
 
-function stopDragPropagation(event: React.MouseEvent | React.TouchEvent) {
-  event.stopPropagation()
-}
-
 const mapSourceStyles: Record<MapSource, { bg: string; grid: string; label: string }> = {
   tactical: {
     bg: "tactical-bg",
@@ -145,10 +141,10 @@ export function TacticalViewport() {
     setIsPanning(false)
   }, [])
 
-  // Mouse events
+  // Mouse events — never preventDefault on mousedown; it can cancel button clicks.
   const onMouseDown = (e: React.MouseEvent) => {
     if (isInteractiveTarget(e.target)) return
-    e.preventDefault()
+    if (e.button !== 0) return
     handleDragStart(e.clientX, e.clientY)
   }
 
@@ -238,7 +234,7 @@ export function TacticalViewport() {
   return (
     <div className="flex-1 flex flex-col tactical-card overflow-hidden relative">
       {/* Header */}
-      <div className="p-3 border-b border-border flex items-center justify-between">
+      <div className="relative z-40 p-3 border-b border-border flex flex-wrap items-center justify-between gap-2">
         <div className="flex items-center gap-3">
           <span className={cn("text-sm font-semibold uppercase tracking-wide", styles.textColor)}>Tactical Viewport</span>
           <div className={cn(
@@ -270,6 +266,7 @@ export function TacticalViewport() {
             return (
               <button
                 key={source}
+                type="button"
                 onClick={() => setMapSource(source)}
                 className={cn(
                   "flex items-center gap-1 px-2 py-1 rounded text-[9px] font-medium transition-all duration-200",
@@ -288,6 +285,7 @@ export function TacticalViewport() {
         {/* View Mode Toggle - Sector/Floor */}
         <div className={cn("flex items-center gap-0.5 px-1 py-1 rounded border", styles.panelBg)}>
           <button
+            type="button"
             onClick={() => setViewMode("sector")}
             className={cn(
               "px-2 py-0.5 rounded text-[8px] font-medium transition-all duration-200",
@@ -298,6 +296,7 @@ export function TacticalViewport() {
             Sector
           </button>
           <button
+            type="button"
             onClick={() => setViewMode("floor")}
             className={cn(
               "px-2 py-0.5 rounded text-[8px] font-medium transition-all duration-200",
@@ -361,11 +360,12 @@ export function TacticalViewport() {
         </div>
       </div>
 
-      {/* Isometric Scene with Interaction */}
+      {/* Map viewport: drag layer + floating controls */}
+      <div className="flex-1 relative min-h-0 overflow-hidden">
       <div 
         ref={containerRef}
         className={cn(
-          "flex-1 relative overflow-hidden scanlines transition-all duration-300 select-none",
+          "absolute inset-0 scanlines transition-all duration-300 select-none",
           !styles.useMapBg && styles.containerBg,
           panMode ? "cursor-move" : "cursor-grab",
           (isDragging || isPanning) && "cursor-grabbing"
@@ -381,12 +381,12 @@ export function TacticalViewport() {
       >
         {/* Map Source Background Layer */}
         {styles.useMapBg && (
-          <div className={cn("absolute inset-0 transition-all duration-500", currentMapStyle.bg)} />
+          <div className={cn("absolute inset-0 pointer-events-none transition-all duration-500", currentMapStyle.bg)} />
         )}
 
         {/* Grid Background */}
         <div 
-          className="absolute inset-0 opacity-20 transition-all duration-500"
+          className="absolute inset-0 pointer-events-none opacity-20 transition-all duration-500"
           style={{
             backgroundImage: `
               linear-gradient(${styles.gridColor} 1px, transparent 1px),
@@ -395,113 +395,6 @@ export function TacticalViewport() {
             backgroundSize: '40px 40px'
           }}
         />
-
-        {/* Compass - Top Right */}
-        <div
-          className="absolute top-4 right-4 z-20"
-          data-no-drag
-          onMouseDown={stopDragPropagation}
-          onTouchStart={stopDragPropagation}
-          onClick={stopDragPropagation}
-        >
-          <div className={cn(
-            "w-24 h-24 rounded-full p-2 relative border",
-            styles.panelBg
-          )}>
-            {/* Compass Ring */}
-            <div className="absolute inset-2 rounded-full border-2 border-border/50" />
-            
-            {/* Cardinal Directions - Fixed to true north based on cross street anchors */}
-            <div 
-              className="absolute inset-0 transition-transform duration-200"
-              style={{ transform: `rotate(${compassRotationForAngle(viewportTransform.rotateZ)}deg)` }}
-            >
-              <span className="absolute top-1 left-1/2 -translate-x-1/2 text-[10px] font-bold text-fire">N</span>
-              <span className={cn("absolute bottom-1 left-1/2 -translate-x-1/2 text-[10px] font-medium", styles.mutedText)}>S</span>
-              <span className={cn("absolute left-1 top-1/2 -translate-y-1/2 text-[10px] font-medium", styles.mutedText)}>W</span>
-              <span className={cn("absolute right-1 top-1/2 -translate-y-1/2 text-[10px] font-medium", styles.mutedText)}>E</span>
-            </div>
-
-            {/* Compass Needle */}
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div 
-                className="w-1 h-10 relative transition-transform duration-200"
-                style={{ transform: `rotate(${-compassRotationForAngle(viewportTransform.rotateZ)}deg)` }}
-              >
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-0 h-0 border-l-[4px] border-r-[4px] border-b-[16px] border-l-transparent border-r-transparent border-b-fire" />
-                <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-0 border-l-[4px] border-r-[4px] border-t-[16px] border-l-transparent border-r-transparent border-t-muted-foreground/50" />
-              </div>
-            </div>
-
-            {/* Center dot */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-2 h-2 rounded-full border bg-accent border-accent-foreground" />
-          </div>
-          
-          {/* View Label with Cross Street Reference */}
-          <div className={cn("mt-2 px-3 py-1.5 rounded text-center border", styles.panelBg)}>
-            <span className={cn("text-[10px]", styles.mutedText)}>Viewing:</span>
-            <span className={cn("text-xs font-medium ml-1", styles.textColor)}>{viewLabel}</span>
-          </div>
-        </div>
-
-        {/* Sector/Floor Buttons - Top Left (compact/skidier styling) */}
-        <div
-          className="absolute top-4 left-4 z-20"
-          data-no-drag
-          onMouseDown={stopDragPropagation}
-          onTouchStart={stopDragPropagation}
-          onClick={stopDragPropagation}
-        >
-          <div className={cn("p-1.5 rounded border", styles.panelBg)}>
-            <div className="flex flex-col gap-0.5">
-              {viewMode === "sector" ? (
-                // Sector View Buttons
-                sectors.map((sector) => (
-                  <button
-                    key={sector}
-                    type="button"
-                    onMouseDown={stopDragPropagation}
-                    onClick={() => goToSector(sector)}
-                    className={cn(
-                      "px-2 py-1 rounded text-[9px] font-bold transition-all duration-200 text-left",
-                      selectedSector === sector && !isFreeRotate
-                        ? "bg-accent text-accent-foreground"
-                        : cn(styles.mutedText, "hover:bg-secondary hover:text-foreground")
-                    )}
-                  >
-                    {sectorLabels[sector]}
-                  </button>
-                ))
-              ) : (
-                // Floor View Buttons
-                floors.map((floor) => (
-                  <button
-                    key={floor}
-                    type="button"
-                    onMouseDown={stopDragPropagation}
-                    onClick={() => goToFloor(floor)}
-                    className={cn(
-                      "px-2 py-1 rounded text-[9px] font-bold transition-all duration-200 text-left",
-                      selectedFloor === floor && !isFreeRotate
-                        ? "bg-accent text-accent-foreground"
-                        : cn(styles.mutedText, "hover:bg-secondary hover:text-foreground")
-                    )}
-                  >
-                    {floorLabels[floor]}
-                  </button>
-                ))
-              )}
-            </div>
-            {isFreeRotate && (
-              <button
-                onClick={resetViewport}
-                className="mt-1 w-full px-2 py-0.5 rounded text-[8px] font-medium bg-fire/20 text-fire border border-fire/30 hover:bg-fire/30 transition-all"
-              >
-                Reset
-              </button>
-            )}
-          </div>
-        </div>
 
         {/* Isometric Scene Container */}
         <div 
@@ -973,8 +866,95 @@ export function TacticalViewport() {
         </div>
       </div>
 
+      {/* Floating controls — outside drag layer so clicks always work */}
+      <div className="absolute inset-0 z-30 pointer-events-none">
+        {/* Sector/Floor Buttons - Top Left */}
+        <div className="absolute top-4 left-4 pointer-events-auto">
+          <div className={cn("p-1.5 rounded border shadow-lg", styles.panelBg)}>
+            <div className="flex flex-col gap-0.5">
+              {viewMode === "sector" ? (
+                sectors.map((sector) => (
+                  <button
+                    key={sector}
+                    type="button"
+                    onClick={() => goToSector(sector)}
+                    className={cn(
+                      "px-2 py-1 rounded text-[9px] font-bold transition-all duration-200 text-left cursor-pointer",
+                      selectedSector === sector && !isFreeRotate
+                        ? "bg-accent text-accent-foreground"
+                        : cn(styles.mutedText, "hover:bg-secondary hover:text-foreground")
+                    )}
+                  >
+                    {sectorLabels[sector]}
+                  </button>
+                ))
+              ) : (
+                floors.map((floor) => (
+                  <button
+                    key={floor}
+                    type="button"
+                    onClick={() => goToFloor(floor)}
+                    className={cn(
+                      "px-2 py-1 rounded text-[9px] font-bold transition-all duration-200 text-left cursor-pointer",
+                      selectedFloor === floor && !isFreeRotate
+                        ? "bg-accent text-accent-foreground"
+                        : cn(styles.mutedText, "hover:bg-secondary hover:text-foreground")
+                    )}
+                  >
+                    {floorLabels[floor]}
+                  </button>
+                ))
+              )}
+            </div>
+            {isFreeRotate && (
+              <button
+                type="button"
+                onClick={resetViewport}
+                className="mt-1 w-full px-2 py-0.5 rounded text-[8px] font-medium bg-fire/20 text-fire border border-fire/30 hover:bg-fire/30 transition-all cursor-pointer"
+              >
+                Reset
+              </button>
+            )}
+          </div>
+        </div>
+
+        {/* Compass - Top Right */}
+        <div className="absolute top-4 right-4 pointer-events-auto">
+          <div className={cn(
+            "w-24 h-24 rounded-full p-2 relative border shadow-lg",
+            styles.panelBg
+          )}>
+            <div className="absolute inset-2 rounded-full border-2 border-border/50" />
+            <div 
+              className="absolute inset-0 transition-transform duration-200"
+              style={{ transform: `rotate(${compassRotationForAngle(viewportTransform.rotateZ)}deg)` }}
+            >
+              <span className="absolute top-1 left-1/2 -translate-x-1/2 text-[10px] font-bold text-fire">N</span>
+              <span className={cn("absolute bottom-1 left-1/2 -translate-x-1/2 text-[10px] font-medium", styles.mutedText)}>S</span>
+              <span className={cn("absolute left-1 top-1/2 -translate-y-1/2 text-[10px] font-medium", styles.mutedText)}>W</span>
+              <span className={cn("absolute right-1 top-1/2 -translate-y-1/2 text-[10px] font-medium", styles.mutedText)}>E</span>
+            </div>
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div 
+                className="w-1 h-10 relative transition-transform duration-200"
+                style={{ transform: `rotate(${-compassRotationForAngle(viewportTransform.rotateZ)}deg)` }}
+              >
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-0 h-0 border-l-[4px] border-r-[4px] border-b-[16px] border-l-transparent border-r-transparent border-b-fire" />
+                <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-0 border-l-[4px] border-r-[4px] border-t-[16px] border-l-transparent border-r-transparent border-t-muted-foreground/50" />
+              </div>
+            </div>
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-2 h-2 rounded-full border bg-accent border-accent-foreground" />
+          </div>
+          <div className={cn("mt-2 px-3 py-1.5 rounded text-center border shadow-lg", styles.panelBg)}>
+            <span className={cn("text-[10px]", styles.mutedText)}>Viewing:</span>
+            <span className={cn("text-xs font-medium ml-1", styles.textColor)}>{viewLabel}</span>
+          </div>
+        </div>
+      </div>
+
       {/* Floor Tactical Notes - Shows when in Floor View mode */}
       <FloorTacticalNotes />
+      </div>
     </div>
   )
 }
