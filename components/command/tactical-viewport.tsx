@@ -8,6 +8,7 @@ import {
 import { Button } from "@/components/ui/button"
 import { useSimulation, SectorView, FloorView, MapSource, incidentLocation } from "./simulation-context"
 import { FloorTacticalNotes } from "./floor-tactical-notes"
+import { GoogleMapsLayer } from "./google-maps-layer"
 import { cn } from "@/lib/utils"
 
 const sectorLabels: Record<SectorView, string> = {
@@ -381,8 +382,11 @@ export function TacticalViewport() {
         onTouchEnd={isTacticalMap ? onTouchEnd : undefined}
         onWheel={isTacticalMap ? onWheel : undefined}
       >
-        {/* Map Source Background Layer */}
-        {(styles.useMapBg || !isTacticalMap) && (
+        {/* Real Google imagery for non-tactical sources (satellite / Google Maps / Street View) */}
+        {!isTacticalMap && <GoogleMapsLayer source={mapSource} />}
+
+        {/* Map Source Background Layer — simulated fallback for the tactical overlay only */}
+        {isTacticalMap && styles.useMapBg && (
           <div className={cn("absolute inset-0 pointer-events-none transition-all duration-500", currentMapStyle.bg)} />
         )}
 
