@@ -95,6 +95,7 @@ export function TacticalViewport() {
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 })
   
   const currentMapStyle = mapSourceStyles[mapSource]
+  const isTacticalMap = mapSource === "tactical"
   const isInterior = selectedSector === "interior"
   const isRoofView = selectedSector === "roof" || selectedSector === "overhead"
 
@@ -365,22 +366,23 @@ export function TacticalViewport() {
       <div 
         ref={containerRef}
         className={cn(
-          "absolute inset-0 scanlines transition-all duration-300 select-none",
+          "absolute inset-0 transition-all duration-300 select-none",
+          isTacticalMap && "scanlines",
           !styles.useMapBg && styles.containerBg,
-          panMode ? "cursor-move" : "cursor-grab",
-          (isDragging || isPanning) && "cursor-grabbing"
+          isTacticalMap && (panMode ? "cursor-move" : "cursor-grab"),
+          isTacticalMap && (isDragging || isPanning) && "cursor-grabbing"
         )}
-        onMouseDown={onMouseDown}
-        onMouseMove={onMouseMove}
-        onMouseUp={onMouseUp}
-        onMouseLeave={onMouseLeave}
-        onTouchStart={onTouchStart}
-        onTouchMove={onTouchMove}
-        onTouchEnd={onTouchEnd}
-        onWheel={onWheel}
+        onMouseDown={isTacticalMap ? onMouseDown : undefined}
+        onMouseMove={isTacticalMap ? onMouseMove : undefined}
+        onMouseUp={isTacticalMap ? onMouseUp : undefined}
+        onMouseLeave={isTacticalMap ? onMouseLeave : undefined}
+        onTouchStart={isTacticalMap ? onTouchStart : undefined}
+        onTouchMove={isTacticalMap ? onTouchMove : undefined}
+        onTouchEnd={isTacticalMap ? onTouchEnd : undefined}
+        onWheel={isTacticalMap ? onWheel : undefined}
       >
         {/* Map Source Background Layer */}
-        {styles.useMapBg && (
+        {(styles.useMapBg || !isTacticalMap) && (
           <div className={cn("absolute inset-0 pointer-events-none transition-all duration-500", currentMapStyle.bg)} />
         )}
 
@@ -399,7 +401,8 @@ export function TacticalViewport() {
           }}
         />
 
-        {/* Isometric Scene Container */}
+        {/* Isometric Scene Container — tactical overlay only */}
+        {isTacticalMap && (
         <div 
           className="absolute inset-0 flex items-center justify-center transition-transform duration-300"
           style={{
@@ -867,9 +870,11 @@ export function TacticalViewport() {
             )}
           </div>
         </div>
+        )}
       </div>
 
-      {/* Floating controls — outside drag layer so clicks always work */}
+      {/* Floating controls — tactical overlay only */}
+      {isTacticalMap && (
       <div className="absolute inset-0 z-30 pointer-events-none">
         {/* Sector/Floor Buttons - Top Left */}
         <div className="absolute top-4 left-4 pointer-events-auto">
@@ -954,6 +959,7 @@ export function TacticalViewport() {
           </div>
         </div>
       </div>
+      )}
 
       {/* Floor Tactical Notes - Shows when in Floor View mode */}
       <FloorTacticalNotes />

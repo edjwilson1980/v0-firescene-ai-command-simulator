@@ -80,9 +80,9 @@ const floorData: Record<FloorView, FloorInfo> = {
 }
 
 export function FloorTacticalNotes() {
-  const { viewMode, selectedFloor, displayMode } = useSimulation()
+  const { viewMode, selectedFloor, displayMode, mapSource } = useSimulation()
 
-  if (viewMode !== "floor") {
+  if (viewMode !== "floor" || mapSource !== "tactical") {
     return null
   }
 
