@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { useSimulation } from "./simulation-context"
 import { VoiceNoteRecorder } from "./voice-note-recorder"
 import { cn } from "@/lib/utils"
+import { toast } from "sonner"
 
 // Units on scene derived from radio traffic
 const unitsOnScene = {
@@ -125,10 +126,30 @@ export function CommandActions() {
   }
 
   const handleAction = (action: string) => {
-    if (action === "parCheck") {
-      setShowPARModal(true)
-    } else if (action === "voiceNote") {
-      setShowVoiceRecorder(true)
+    switch (action) {
+      case "parCheck":
+        setShowPARModal(true)
+        break
+      case "voiceNote":
+        setShowVoiceRecorder(true)
+        break
+      case "addUnit":
+        toast.info("Add Unit", { description: "Dispatch additional unit to the incident." })
+        break
+      case "addHazard":
+        toast.warning("Add Hazard", { description: "Log a new hazard on the tactical board." })
+        break
+      case "snapshot":
+        toast.success("Snapshot Saved", { description: "Current viewport captured for incident record." })
+        break
+      case "replay":
+        toast.message("Replay Started", { description: "Playing back incident timeline from dispatch." })
+        break
+      case "export":
+        toast.success("Export Ready", { description: "Incident report prepared for download." })
+        break
+      default:
+        break
     }
   }
 

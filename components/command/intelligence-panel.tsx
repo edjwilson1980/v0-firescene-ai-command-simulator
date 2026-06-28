@@ -48,10 +48,13 @@ interface IntelligencePanelProps {
 }
 
 export function IntelligencePanel({ isCollapsed, onToggleCollapse, isClosed, onClose, onOpen }: IntelligencePanelProps) {
-  const { selectedSector, mapSource, currentEvent, selectedEventId, displayMode, isFreeRotate } = useSimulation()
+  const { selectedSector, mapSource, currentEvent, selectedEventId, displayMode, isFreeRotate, goToSector, setViewMode } = useSimulation()
   const [activeTab, setActiveTab] = useState<"search" | "victims">("search")
   const [victims, setVictims] = useState<Victim[]>(initialVictims)
   const [showAddVictim, setShowAddVictim] = useState(false)
+  const [previewZoom, setPreviewZoom] = useState(1)
+  const [previewRotation, setPreviewRotation] = useState(-45)
+  const [previewMode, setPreviewMode] = useState<"slice" | "xray" | "interior" | null>(null)
 
   const structureData = [
     { label: "Building Type", value: "Brick Ordinary" },
@@ -415,10 +418,22 @@ export function IntelligencePanel({ isCollapsed, onToggleCollapse, isClosed, onC
           <div className="flex items-center justify-between mb-3">
             <span className={cn("text-[10px] uppercase tracking-wide", styles.mutedText)}>3D Preview</span>
             <div className="flex gap-1">
-              <Button variant="ghost" size="sm" className={cn("h-6 w-6 p-0", displayMode === "night-vision" && "hover:bg-green-900/50")}>
+              <Button
+                variant="ghost"
+                size="sm"
+                className={cn("h-6 w-6 p-0", displayMode === "night-vision" && "hover:bg-green-900/50")}
+                onClick={() => setPreviewRotation((r) => r - 15)}
+                title="Rotate preview"
+              >
                 <RotateCcw className={cn("w-3 h-3", displayMode === "night-vision" && "text-green-400")} />
               </Button>
-              <Button variant="ghost" size="sm" className={cn("h-6 w-6 p-0", displayMode === "night-vision" && "hover:bg-green-900/50")}>
+              <Button
+                variant="ghost"
+                size="sm"
+                className={cn("h-6 w-6 p-0", displayMode === "night-vision" && "hover:bg-green-900/50")}
+                onClick={() => setPreviewZoom((z) => Math.min(1.6, z + 0.2))}
+                title="Zoom preview"
+              >
                 <ZoomIn className={cn("w-3 h-3", displayMode === "night-vision" && "text-green-400")} />
               </Button>
             </div>
@@ -430,7 +445,7 @@ export function IntelligencePanel({ isCollapsed, onToggleCollapse, isClosed, onC
               <div 
                 className="relative w-16 h-16"
                 style={{ 
-                  transform: "rotateX(60deg) rotateZ(-45deg)",
+                  transform: `rotateX(60deg) rotateZ(${previewRotation}deg) scale(${previewZoom})`,
                   transformStyle: "preserve-3d"
                 }}
               >
@@ -460,37 +475,52 @@ export function IntelligencePanel({ isCollapsed, onToggleCollapse, isClosed, onC
           {/* View Controls */}
           <div className="flex gap-1 mt-2">
             <Button 
-              variant="secondary" 
+              variant={previewMode === "slice" ? "default" : "secondary"}
               size="sm" 
               className={cn(
                 "flex-1 h-6 text-[9px]",
                 displayMode === "night-vision" && "bg-green-950 border-green-800 text-green-400 hover:bg-green-900/50",
                 displayMode === "light" && "bg-slate-100 border-slate-300 text-slate-700 hover:bg-slate-200"
               )}
+              onClick={() => {
+                setPreviewMode("slice")
+                setViewMode("sector")
+                goToSector("overhead")
+              }}
             >
               <Layers className="w-3 h-3 mr-1" />
               Slice
             </Button>
             <Button 
-              variant="secondary" 
+              variant={previewMode === "xray" ? "default" : "secondary"}
               size="sm" 
               className={cn(
                 "flex-1 h-6 text-[9px]",
                 displayMode === "night-vision" && "bg-green-950 border-green-800 text-green-400 hover:bg-green-900/50",
                 displayMode === "light" && "bg-slate-100 border-slate-300 text-slate-700 hover:bg-slate-200"
               )}
+              onClick={() => {
+                setPreviewMode("xray")
+                setViewMode("sector")
+                goToSector("interior")
+              }}
             >
               <Eye className="w-3 h-3 mr-1" />
               X-Ray
             </Button>
             <Button 
-              variant="secondary" 
+              variant={previewMode === "interior" ? "default" : "secondary"}
               size="sm" 
               className={cn(
                 "flex-1 h-6 text-[9px]",
                 displayMode === "night-vision" && "bg-green-950 border-green-800 text-green-400 hover:bg-green-900/50",
                 displayMode === "light" && "bg-slate-100 border-slate-300 text-slate-700 hover:bg-slate-200"
               )}
+              onClick={() => {
+                setPreviewMode("interior")
+                setViewMode("sector")
+                goToSector("interior")
+              }}
             >
               <Box className="w-3 h-3 mr-1" />
               Interior

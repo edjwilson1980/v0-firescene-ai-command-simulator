@@ -47,6 +47,15 @@ const mapSourceLabels: Record<MapSource, string> = {
   "google-earth": "Overview",
 }
 
+function isInteractiveTarget(target: EventTarget | null) {
+  if (!(target instanceof Element)) return false
+  return !!target.closest("button, a, input, select, textarea, [data-no-drag]")
+}
+
+function stopDragPropagation(event: React.MouseEvent | React.TouchEvent) {
+  event.stopPropagation()
+}
+
 const mapSourceStyles: Record<MapSource, { bg: string; grid: string; label: string }> = {
   tactical: {
     bg: "tactical-bg",
@@ -86,6 +95,7 @@ export function TacticalViewport() {
   const [isDragging, setIsDragging] = useState(false)
   const [isPanning, setIsPanning] = useState(false)
   const [panMode, setPanMode] = useState(false)
+  const [showLayers, setShowLayers] = useState(true)
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 })
   
   const currentMapStyle = mapSourceStyles[mapSource]
@@ -137,6 +147,7 @@ export function TacticalViewport() {
 
   // Mouse events
   const onMouseDown = (e: React.MouseEvent) => {
+    if (isInteractiveTarget(e.target)) return
     e.preventDefault()
     handleDragStart(e.clientX, e.clientY)
   }
@@ -150,6 +161,7 @@ export function TacticalViewport() {
 
   // Touch events
   const onTouchStart = (e: React.TouchEvent) => {
+    if (isInteractiveTarget(e.target)) return
     if (e.touches.length === 1) {
       handleDragStart(e.touches[0].clientX, e.touches[0].clientY)
     }
@@ -325,10 +337,25 @@ export function TacticalViewport() {
           <Button variant="ghost" size="sm" className="h-7 w-7 p-0" onClick={resetViewport} title="Reset View">
             <Home className="w-4 h-4" />
           </Button>
-          <Button variant="ghost" size="sm" className="h-7 w-7 p-0">
+          <Button
+            variant={showLayers ? "secondary" : "ghost"}
+            size="sm"
+            className={cn("h-7 w-7 p-0", showLayers && "bg-accent text-accent-foreground")}
+            onClick={() => setShowLayers(!showLayers)}
+            title="Toggle Map Layers"
+          >
             <Layers className="w-4 h-4" />
           </Button>
-          <Button variant="ghost" size="sm" className="h-7 w-7 p-0">
+          <Button
+            variant="ghost"
+            size="sm"
+            className="h-7 w-7 p-0"
+            onClick={() => {
+              resetViewport()
+              goToSector("alpha")
+            }}
+            title="Center Crosshair"
+          >
             <Crosshair className="w-4 h-4" />
           </Button>
         </div>
@@ -370,7 +397,13 @@ export function TacticalViewport() {
         />
 
         {/* Compass - Top Right */}
-        <div className="absolute top-4 right-4 z-20" onClick={(e) => e.stopPropagation()}>
+        <div
+          className="absolute top-4 right-4 z-20"
+          data-no-drag
+          onMouseDown={stopDragPropagation}
+          onTouchStart={stopDragPropagation}
+          onClick={stopDragPropagation}
+        >
           <div className={cn(
             "w-24 h-24 rounded-full p-2 relative border",
             styles.panelBg
@@ -412,7 +445,13 @@ export function TacticalViewport() {
         </div>
 
         {/* Sector/Floor Buttons - Top Left (compact/skidier styling) */}
-        <div className="absolute top-4 left-4 z-20" onClick={(e) => e.stopPropagation()}>
+        <div
+          className="absolute top-4 left-4 z-20"
+          data-no-drag
+          onMouseDown={stopDragPropagation}
+          onTouchStart={stopDragPropagation}
+          onClick={stopDragPropagation}
+        >
           <div className={cn("p-1.5 rounded border", styles.panelBg)}>
             <div className="flex flex-col gap-0.5">
               {viewMode === "sector" ? (
@@ -420,6 +459,8 @@ export function TacticalViewport() {
                 sectors.map((sector) => (
                   <button
                     key={sector}
+                    type="button"
+                    onMouseDown={stopDragPropagation}
                     onClick={() => goToSector(sector)}
                     className={cn(
                       "px-2 py-1 rounded text-[9px] font-bold transition-all duration-200 text-left",
@@ -436,6 +477,8 @@ export function TacticalViewport() {
                 floors.map((floor) => (
                   <button
                     key={floor}
+                    type="button"
+                    onMouseDown={stopDragPropagation}
                     onClick={() => goToFloor(floor)}
                     className={cn(
                       "px-2 py-1 rounded text-[9px] font-bold transition-all duration-200 text-left",
@@ -799,6 +842,7 @@ export function TacticalViewport() {
             </div>
 
             {/* Collapse Zone */}
+            {showLayers && (
             <div 
               className={cn(
                 "absolute -bottom-8 -left-8 w-56 h-56 border-2 border-dashed rounded-lg",
@@ -811,8 +855,11 @@ export function TacticalViewport() {
                 "text-hazard"
               )}>Collapse Zone</span>
             </div>
+            )}
 
             {/* Fire Apparatus - Engine 78 (positioned on W Marquette Rd in front - Alpha side) */}
+            {showLayers && (
+            <>
             <div className={cn(
               "absolute -bottom-20 left-1/2 -translate-x-1/2 w-20 h-8 border rounded-sm",
               "bg-fire/80 border-fire glow-fire"
@@ -920,6 +967,8 @@ export function TacticalViewport() {
               "absolute top-1/2 -translate-y-1/2 -right-16 px-2 py-0.5 rounded text-[8px] font-bold uppercase tracking-wider border",
               "bg-card/80 border-border text-foreground"
             )} style={{ transform: "translateY(20px)" }}>Delta</div>
+            </>
+            )}
           </div>
         </div>
       </div>
